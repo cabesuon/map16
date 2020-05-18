@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta
+    name="viewport"
+    content="initial-scale=1,maximum-scale=1,user-scalable=no"
+  />
+  <title>Cluster-Filter</title>
+  <link
+    rel="stylesheet"
+    href="https://js.arcgis.com/4.15/esri/themes/light/main.css"
+  />
+  <link rel="stylesheet" href="css/051220.css"/>
+  <script src="https://js.arcgis.com/4.15/"></script>
+  <script src="js/051220.js"></script>
+</head>
+<body>
+<div class="panel-container">
+  <div class="panel-side esri-widget">
+    <ul id="listGraphics">
+      <li>Loading&hellip;</li>
+    </ul>
+  </div>
+  <div id="viewDiv"></div>
+  <div id="infoDiv" class="esri-widget">
+    <h2>Clustering</h2>
+    Current Zoom Level:
+    <div id="currentZoomLevelValue">12</div>
+    <label for="clusteringUntilZoomLevel">Clustering Until Zoom Level:</label>
+    <select id="clusteringUntilZoomLevel" class="esri-select">
+      <option value="99" >Always</option>
+      <option value="18">18 (~1:2   thousand)</option>
+      <option value="17">17 (~1:4   thousand)</option>
+      <option value="16">16 (~1:8   thousand)</option>
+      <option value="15">15 (~1:15  thousand)</option>
+      <option value="14">14 (~1:35  thousand)</option>
+      <option value="13">13 (~1:70  thousand)</option>
+      <option value="12">12 (~1:150 thousand)</option>
+      <option value="11">11 (~1:250 thousand)</option>
+      <option value="10">10 (~1:500 thousand)</option>
+      <option value="9" >9  (~1:1    million)</option>
+      <option value="8" >8  (~1:2    million)</option>
+      <option value="7" >7  (~1:4    million)</option>
+      <option value="6" >6  (~1:10   million)</option>
+      <option value="5" >5  (~1:15   million)</option>
+      <option value="4" >4  (~1:35   million)</option>
+      <option value="3" >3  (~1:70   million)</option>
+      <option value="-1" >Never</option>
+    </select>
+    <h2>Filtering</h2>
+    <div id="seasons-filter" class="esri-widget">
+      <div class="season-item visible-season" data-season="Very High">Very High</div>
+      <div class="season-item visible-season" data-season="High">High</div>
+      <div class="season-item visible-season" data-season="Medium">Medium</div>
+      <div class="season-item visible-season" data-season="Low">Low</div>
+      <div class="season-item visible-season" data-season="Very Low">Very Low</div>
+    </div>
+    <div class="esri-widget mt-3">
+      <button id="seasonsReset" class="esri-button">Reset filter</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

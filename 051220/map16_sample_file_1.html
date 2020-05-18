@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta
+            name="viewport"
+            content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>map16 - Filter - Query - Example</title>
+
+    <link
+            rel="stylesheet"
+            href="https://js.arcgis.com/4.15/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.15/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #seasons-filter {
+            height: 160px;
+            width: 100%;
+            visibility: hidden;
+        }
+
+        .season-item {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            vertical-align: baseline;
+            cursor: pointer;
+            height: 40px;
+        }
+
+        .season-item:focus {
+            background-color: dimgrey;
+        }
+
+        .season-item:hover {
+            background-color: dimgrey;
+        }
+
+        #titleDiv {
+            padding: 10px;
+        }
+
+        #titleText {
+            font-size: 20pt;
+            font-weight: 60;
+            padding-bottom: 10px;
+        }
+
+        .panel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .panel-side {
+            padding: 2px;
+            box-sizing: border-box;
+            width: 300px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.6);
+            overflow: auto;
+            z-index: 60;
+        }
+
+        .panel-side h3 {
+            padding: 0 20px;
+            margin: 20px 0;
+        }
+
+        .panel-side ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .panel-side li {
+            list-style: none;
+            padding: 10px 20px;
+        }
+
+        .panel-result {
+            cursor: pointer;
+            margin: 2px 0;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-result:hover,
+        .panel-result:focus {
+            color: orange;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+    </style>
+    <script>
+        require([
+            "esri/views/MapView",
+            "esri/Map",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/Expand"
+        ], function(MapView, Map, FeatureLayer, Expand) {
+            const listNode = document.getElementById("list_graphics");
+            const seasonsNodes = document.querySelectorAll(`.season-item`);
+            const seasonsElement = document.getElementById("seasons-filter");
+
+            const popupTemplate = {
+                // autocasts as new PopupTemplate()
+                title: "Location: {warning_level}",
+                lastEditInfoEnabled: false,
+                content: [
+                    {
+                        type: "fields",
+                        fieldInfos: [
+                            {
+                                fieldName: "warning_level",
+                                label: "Warning Level",
+                                format: {
+                                    places: 0,
+                                    digitSeparator: true
+                                }
+                            }
+
+
+                        ]
+                    }
+                ]
+            };
+
+            let layer, map, view;
+            let selectedSeason = null;
+            let floodLayerView;
+            let graphics = null;
+            // functions
+            const filterBySeason = function (event) {
+                selectedSeason = event.target.getAttribute("data-season");
+                floodLayerView.filter = {
+                    where: "warning_level = '" + selectedSeason + "'"
+                };
+                document
+                    .getElementById("filterReset")
+                    .addEventListener("click", function() {
+                        floodLayerView.filter = selectedSeason;
+                    });
+
+                updateList();
+            };
+            const updateList = function () {
+                if (!graphics) {
+                    return;
+                }
+                const fragment = document.createDocumentFragment();
+                graphics.forEach(function(result, index) {
+                    const attributes = result.attributes;
+                    if (!selectedSeason || attributes.warning_level ===  selectedSeason) {
+                        const warning_level = attributes.warning_level;
+                        // Create the list
+                        const li = document.createElement("li");
+                        li.classList.add("panel-result");
+                        li.tabIndex = 0;
+                        li.setAttribute("data-result-id", index);
+                        li.textContent = warning_level;
+                        fragment.appendChild(li);
+                    }
+                });
+                // Empty the current list
+                listNode.innerHTML = "";
+                listNode.appendChild(fragment);
+            };
+            // flash flood warnings layer
+            layer = new FeatureLayer({
+                url:
+                    "https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/test_point_layer/FeatureServer/0",
+                /*definitionExpression: "warning_level = 'New York'",*/
+                outFields: ["warning_level"],
+                popupTemplate: popupTemplate
+            });
+            map = new Map({
+                basemap: "gray-vector",
+                layers: [layer]
+            });
+            view = new MapView({
+                map: map,
+                container: "viewDiv",
+                center: [-2.228596,51.723758],
+                zoom: 12
+            });
+            // click event handler for seasons choices
+            seasonsElement.addEventListener("click", filterBySeason);
+            view.whenLayerView(layer).then(function(layerView) {
+                /*
+
+                filter
+
+                */
+                floodLayerView = layerView;
+                // set up UI items
+                seasonsElement.style.visibility = "visible";
+                const seasonsExpand = new Expand({
+                    view: view,
+                    content: seasonsElement,
+                    expandIconClass: "esri-icon-filter",
+                    group: "top-left"
+                });
+                //clear the filters when user closes the expand widget
+
+                /*view.ui.add(seasonsExpand, "top-left");*/
+              /*  view.ui.add("titleDiv", "bottom-left");*/
+
+                /*
+
+                query
+
+                */
+                layerView.watch("updating", function(value) {
+                    if (!value) {
+                        // wait for the layer view to finish updating
+                        // query all the features available for drawing.
+                        layerView
+                            .queryFeatures({
+                                geometry: view.extent,
+                                returnGeometry: true,
+                                orderByFields: ["warning_level"]
+                            })
+                            .then(function (results) {
+                                graphics = results.features;
+                                updateList();
+                            })
+                            .catch(function(error) {
+                                console.error("query failed: ", error);
+                            });
+                    }
+                });
+            });
+            /*
+
+            query
+
+            */
+            // listen to click event on list items
+            listNode.addEventListener("click", onListClickHandler);
+            function onListClickHandler(event) {
+                const target = event.target;
+                const resultId = target.getAttribute("data-result-id");
+                // get the graphic corresponding to the clicked item
+                const result =
+                    resultId && graphics && graphics[parseInt(resultId, 10)];
+                if (result) {
+                    // open the popup at the centroid of polygon
+                    // and set the popup's features which will populate popup content and title.
+                    view
+                        .goTo(result.geometry.extent.expand(2))
+                        .then(function() {
+                            view.popup.open({
+                                features: [result],
+                                location: result.geometry.centroid
+                            });
+                        })
+                        .catch(function(error) {
+                            if (error.warning_level != "AbortError") {
+                                console.error(error);
+                            }
+                        });
+                }
+            };
+        });
+    </script>
+</head>
+
+<body>
+<div class="panel-container">
+    <button id="filterReset" class="esri-button">Reset filter</button>
+    <div id="seasons-filter" class="esri-widget">
+        <div class="season-item visible-season" data-season="Very High">Very High</div>
+        <div class="season-item visible-season" data-season="High">High</div>
+        <div class="season-item visible-season" data-season="Medium">Medium</div>
+        <div class="season-item visible-season" data-season="Low">Low</div>
+        <div class="season-item visible-season" data-season="Very Low">Very Low</div>
+    </div>
+    <div class="panel-side esri-widget">
+        <ul id="list_graphics">
+            <li>Loading&hellip;</li>
+        </ul>
+    </div>
+    <div id="viewDiv"></div>
+</div>
+</body>
+</html>
