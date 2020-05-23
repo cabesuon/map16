@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>jQuery Ajax Example</title>
+
+    <link href="css/styles.css" rel="stylesheet" />
+
+    <style>
+
+        #chart {
+          max-width: 1000px;
+          max-heigth: 240px;
+          margin: 35px auto;
+        }
+
+    </style>
+
+    <script>
+      window.Promise ||
+        document.write(
+          '<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"><\/script>'
+        )
+      window.Promise ||
+        document.write(
+          '<script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20171210/classList.min.js"><\/script>'
+        )
+      window.Promise ||
+        document.write(
+          '<script src="https://cdn.jsdelivr.net/npm/findindex_polyfill_mdn"><\/script>'
+        )
+    </script>
+
+
+    <script src="js/apexcharts.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+     <div id="chart"></div>
+
+    <script>
+
+        var options = {
+          series: [{
+          name: 'Data 1',
+          type: 'area',
+          data: [630, 720, 600,710, 750, 740, 635, 730, 633, 628, 720]
+        }, {
+          name: 'Data 2',
+          type: 'area',
+          data: [730, 620, 700,610, 750, 640, 735, 630, 733, 628, 720]
+        }],
+          chart: {
+          height: 350,
+          type: 'line',
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        fill: {
+          type:'solid',
+          opacity: [0.35, 1],
+        },
+        labels: ['2020-05-04 23:10:22', '2020-05-05 23:10:22','2020-05-06 23:10:22','2020-05-07 23:10:22','2020-05-08 23:10:22','2020-05-09 23:10:22','2020-05-10 23:10:22','2020-05-11 23:10:22','2020-05-12 23:10:22','2020-05-13 23:10:22','2020-05-14 23:10:22'],
+        markers: {
+          size: 0
+        },
+        yaxis: [
+          {
+            title: {
+              text: 'Series A',
+            },
+          },
+          {
+            opposite: true,
+            title: {
+              text: 'Series B',
+            },
+          },
+        ],
+        tooltip: {
+          shared: true,
+          intersect: false,
+          y: {
+            formatter: function (y) {
+              if(typeof y !== "undefined") {
+                return  y.toFixed(0) + " points";
+              }
+              return y;
+            }
+          }
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+    </script>
+
+
+  </body>
+</html>

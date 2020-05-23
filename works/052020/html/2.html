@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>jQuery Ajax Example</title>
+
+  <link href="../inputs/map16_chart_sample/css/styles.css" rel="stylesheet" />
+
+  <style>
+    #chart {
+      max-width: 1000px;
+      max-height: 240px;
+      margin: 35px auto;
+    }
+  </style>
+
+  <script>
+    window.Promise ||
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"><\/script>'
+      )
+    window.Promise ||
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20171210/classList.min.js"><\/script>'
+      )
+    window.Promise ||
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/findindex_polyfill_mdn"><\/script>'
+      )
+  </script>
+
+
+  <script src="../inputs/map16_chart_sample/js/apexcharts.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div id="chart"></div>
+
+  <script>
+
+    var options = {
+      series: [],
+      chart: {
+        height: 550,
+        type: 'area',
+      },
+      dataLabels: {
+        enabled: false
+      },
+      title: {
+        text: 'Timeline Example',
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          inverseColors: false,
+          opacityFrom: 0.5,
+          opacityTo: 0.1,
+          stops: [25, 90, 100]
+        },
+      },
+      colors: ['#407ee8', '#e8407e'],
+      stroke: {
+        width: 2
+      },
+      noData: {
+        text: 'Loading...'
+      },
+      xaxis: {
+        type: 'datetime',
+        tickPlacement: 'on',
+        labels: {
+          rotate: -45,
+          rotateAlways: true
+        }
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+
+    var url1 = '../inputs/map16_chart_sample/json_data/data1.json';
+
+    $.getJSON(url1, function (response) {
+      // console.log(`data1: ${response.length}`);
+      chart.appendSeries({
+        name: 'Sales 1',
+        data: response
+      })
+    });
+
+    var url2 = '../inputs/map16_chart_sample/json_data/data2.json';
+
+    $.getJSON(url2, function (response) {
+      // console.log(`data2: ${response.length}`);
+      chart.appendSeries({
+        name: 'Sales 2',
+        data: response
+      })
+    });
+
+
+  </script>
+
+
+</body>
+
+</html>
