@@ -1,4 +1,4 @@
-# Freelance Works For **map16**
+# Freelance works for **map16**s
 
 <table>
   <thead>
@@ -77,6 +77,53 @@ When sidebar item clicked on its zooms to the point location and show popup. (Th
           </li>
           <li>
             1:00
+          </li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td>06/05/2020</td>
+      <td>
+        <a href="./060520/inputs/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+Remove the ability to change clustering zoom level in the map view. We want the ability to set it in the script.js. We have currently set it to 11 in the .js file.
+          </li>
+          <li>
+Leave the filtering option widget in the map view as well as the main buttons outside of the map view.
+          </li>
+          <li>
+Colour the text in the side panel to correspond with High Medium Low etc….
+          </li>
+          <li>
+Expand function currently is added to top right hand corner. We would like to get this working correctly, so map can go full screen.
+          </li>
+          <li>
+<strong>Extra:</strong> Colour the text in the map filter panel to correspond with High Medium Low etc….
+          </li>
+        </ol>
+      </td>
+      <td>
+        <a href="./051220/index.html" target="_blank">Cluster-Filter</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+            0:15
+          </li>
+          <li>
+            0:15
+          </li>
+          <li>
+            0:30
+          </li>
+          <li>
+            0:30
+          </li>
+          <li>
+            0:30
           </li>
         </ol>
       </td>
