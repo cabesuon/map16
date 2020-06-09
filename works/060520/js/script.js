@@ -50,65 +50,50 @@ require([
     }
   };
 
+  function popupTemplateContent(feature) {
+    const div = document.createElement('div');
+    const attributes = feature.graphic.attributes;
+    div.innerHTML = `<a class="btn btn-bordered btn-cons btn-danger full-width"`
+    + `href=${attributes.sensor_url} target="_blank">Analytics Dashboard</a>`
+    + `<table class="esri-widget__table m-t-20"><tbody>`
+    + `<tr><td>Warning Level</td><td>${attributes.current_level}</td></tr>`
+    + `<tr><td>DAM Area</td><td>${attributes.dam}</td></tr>`
+    + `<tr><td>Postcode</td><td>${attributes.postcode}</td></tr>`
+    + `<tr><td>Road</td><td>${attributes.road}</td></tr>`
+    + `<tr><td>Node Reference</td><td>${attributes.sd_number}</td></tr>`
+    + `<tr><td>Alert Level</td><td>${attributes.alert_level}</td></tr>`
+    + `</tbody></table>`;
+    return div;
+  }
+
   /**
    * @type {PopupTemplate}
    */
   const popupTemplate = {
     title: '{current_level} - {postcode}',
     lastEditInfoEnabled: false,
-    content: [
+    content: popupTemplateContent,
+    fieldInfos: [
       {
-        type: 'fields',
-        fieldInfos: [
-          {
-            fieldName: 'current_level',
-            label: 'Warning Level',
-            format: {
-              places: 0,
-              digitSeparator: true
-            }
-          },
-          {
-            fieldName: 'dam',
-            label: 'DAM Area',
-            format: {
-              places: 0,
-              digitSeparator: true
-            }
-          },
-          {
-            fieldName: 'postcode',
-            label: 'Postcode',
-            format: {
-              places: 0,
-              digitSeparator: true
-            }
-          },
-          {
-            fieldName: 'road',
-            label: 'Road',
-            format: {
-              places: 0,
-              digitSeparator: true
-            }
-          },
-          {
-            fieldName: 'sd_number',
-            label: 'Road',
-            format: {
-              places: 0,
-              digitSeparator: true
-            }
-          },
-          {
-            fieldName: 'alert_level',
-            label: 'Alert Level',
-            format: {
-              places: 0,
-              digitSeparator: true
-            }
-          }
-        ]
+        fieldName: 'sensor_url'
+      },
+      {
+        fieldName: 'current_level'
+      },
+      {
+        fieldName: 'dam'
+      },
+      {
+        fieldName: 'postcode'
+      },
+      {
+        fieldName: 'road'
+      },
+      {
+        fieldName: 'sd_number'
+      },
+      {
+        fieldName: 'alert_level'
       }
     ]
   };
@@ -119,7 +104,9 @@ require([
   const layer = new FeatureLayer({
     url:
       'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sap_uu_dam_demo_sensors_wgs_master_view/FeatureServer/0',
-    outFields: ['current_level', 'postcode'],
+    outFields: [
+      'current_level', 'dam', 'postcode', 'road', 'sd_number', 'alert_level', 'sensor_url'
+    ],
     featureReduction: clusterConfig,
     popupTemplate: popupTemplate
   });
@@ -217,19 +204,57 @@ require([
   const listNode = document.getElementById('listGraphics');
 
   /**
-   * Create and resturn a listNode item.
+   * Compare two levels.
+   *
+   * @param {string} a - Level a
+   * @param {string} b - Level b
+   * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
+   */
+  function compareLevels(a, b) {
+    if (a === 'Low') {
+      return -1;
+    }
+    if (b === 'Low') {
+      return 1;
+    }
+    if (a === 'Medium') {
+      return -1;
+    }
+    if (b === 'Medium') {
+      return 1;
+    }
+    return 0;
+  }
+
+  /**
+   * Compare two features.
+   *
+   * @param {Feature} a - Feature a
+   * @param {Feature} b - Feature b
+   * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
+   */
+  function compareFeatures(a, b) {
+    return -1 * compareLevels(
+      a.attributes.current_level,
+      b.attributes.current_level
+    );
+  }
+
+  /**
+   * Create and return a listNode item.
    *
    * @param {number} id - Data result id
    * @param {string} content - Content text
+   * @param {string} level - Level {'High'|'Medium'|'Low'}
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem(id, content) {
+  function listNodeCreateItem(id, content, level) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
     li.setAttribute('data-result-id', id);
     li.textContent = content;
-    switch (content) {
+    switch (level) {
       case 'High':
         li.classList.add('gradient-45deg-red-red');
         break;
@@ -254,6 +279,7 @@ require([
       return;
     }
     const fragment = document.createDocumentFragment();
+    graphics.sort(compareFeatures);
     graphics.forEach(function (result, index) {
       const attributes = result.attributes;
       if (
@@ -261,7 +287,11 @@ require([
         attributes.current_level === selectedSeason
       ) {
         fragment.appendChild(
-          listNodeCreateItem(index, attributes.current_level)
+          listNodeCreateItem(
+            index,
+            attributes.current_level,
+            attributes.current_level
+          )
         );
       }
     });
