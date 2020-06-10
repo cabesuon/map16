@@ -50,19 +50,60 @@ require([
     }
   };
 
+  /**
+   * Returns an anchor with the feature sensor url for PopupTemplate.
+   *
+   * @param {Feature} feature - Feature
+   * @return {string} -The anchor element in string format
+   */
+  function popupTemplateContentSensorAnchor(value) {
+    if (value)
+      return `<a class="btn btn-bordered btn-cons btn-danger full-width m-b-20" `
+      + `href=${value} target="_blank">Analytics Dashboard</a>`;
+    return '';
+  }
+
+  /**
+   * Returns a safe value of a feature attribute value for PopupTemplate.
+   *
+   * @param {Feature} feature - Feature
+   * @return {string} -The table element in string format
+   */
+  function safeAttrValue(value) {
+    return value ? value : 'n/a';
+  }
+
+  /**
+   * Returns a table with the feature attributes for PopupTemplate.
+   *
+   * @param {Feature} feature - Feature
+   * @return {string} -The table element in string format
+   */
+  function popupTemplateContentAttrTable(attrs) {
+    return `<table class="esri-widget__table"><tbody>`
+    + `<tr><td>Warning Level</td><td>${safeAttrValue(attrs.current_level)}</td></tr>`
+    + `<tr><td>DAM Area</td><td>${safeAttrValue(attrs.dam)}</td></tr>`
+    + `<tr><td>Postcode</td><td>${safeAttrValue(attrs.postcode)}</td></tr>`
+    + `<tr><td>Road</td><td>${safeAttrValue(attrs.road)}</td></tr>`
+    + `<tr><td>Node Reference</td><td>${safeAttrValue(attrs.sd_number)}</td></tr>`
+    + `<tr><td>Alert Level</td><td>${safeAttrValue(attrs.alert_level)}</td></tr>`
+    + `</tbody></table>`;
+  }
+
+  /**
+   * Create and return the content of a feature for PopupTemplate.
+   *
+   * @param {Feature} feature - Feature
+   * @return {HTMLDivElement} -The div element
+   */
   function popupTemplateContent(feature) {
     const div = document.createElement('div');
-    const attributes = feature.graphic.attributes;
-    div.innerHTML = `<a class="btn btn-bordered btn-cons btn-danger full-width"`
-    + `href=${attributes.sensor_url} target="_blank">Analytics Dashboard</a>`
-    + `<table class="esri-widget__table m-t-20"><tbody>`
-    + `<tr><td>Warning Level</td><td>${attributes.current_level}</td></tr>`
-    + `<tr><td>DAM Area</td><td>${attributes.dam}</td></tr>`
-    + `<tr><td>Postcode</td><td>${attributes.postcode}</td></tr>`
-    + `<tr><td>Road</td><td>${attributes.road}</td></tr>`
-    + `<tr><td>Node Reference</td><td>${attributes.sd_number}</td></tr>`
-    + `<tr><td>Alert Level</td><td>${attributes.alert_level}</td></tr>`
-    + `</tbody></table>`;
+    if (!feature || !feature.graphic || !feature.graphic.attributes) {
+      return;
+    }
+    const attrs = feature.graphic.attributes;
+    div.innerHTML = popupTemplateContentSensorAnchor(attrs.sensor_url)
+      + popupTemplateContentAttrTable(attrs);
     return div;
   }
 
@@ -95,6 +136,9 @@ require([
       {
         fieldName: 'alert_level'
       }
+    ],
+    outFields: [
+      'current_level', 'dam', 'postcode', 'road', 'sd_number', 'alert_level', 'sensor_url'
     ]
   };
 
@@ -289,7 +333,11 @@ require([
         fragment.appendChild(
           listNodeCreateItem(
             index,
-            attributes.current_level,
+            attributes.current_level
+            + ' | '
+            + attributes.postcode
+            + ' | ' 
+            + attributes.road,
             attributes.current_level
           )
         );
