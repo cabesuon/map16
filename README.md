@@ -171,5 +171,29 @@
         </ol>
       </td>
     </tr>
+    <tr>
+      <td>06/26/2020</td>
+      <td>
+        <a href="./062620/inputs/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+            See the new polygon layer correctly and set everything working as before.
+          </li>
+        </ol>
+      </td>
+      <td>
+        <a href="./062620/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+            1:00
+          </li>
+        </ol>
+      </td>
+    </tr>
+
   </tbody>
 </table>
