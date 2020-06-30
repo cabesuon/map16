@@ -194,6 +194,40 @@
         </ol>
       </td>
     </tr>
-
+    <tr>
+      <td>06/29/2020</td>
+      <td>
+        Corrections and extras to 06/29/2020 work
+      </td>
+      <td>
+        <ol>
+          <li>
+            Grid features without data should say 'In-Active Grid' in sidepanel.
+          </li>
+          <li>
+            Add extra fields to sidepanel.
+          </li>
+          <li>
+            <strong>Fix:</strong> One of our team just spotted something else. For some reason when the ‘MEASURE’ value is 0 the application is reading it as na and not 0. Both in the side panel and the popup.
+          </li>
+        </ol>
+      </td>
+      <td>
+        <a href="./062620/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+            0:10
+          </li>
+          <li>
+            0:00
+          </li>
+          <li>
+            0:10
+          </li>
+        </ol>
+      </td>
+    </tr>
   </tbody>
 </table>

@@ -70,7 +70,7 @@ require([
    * @return {string} -The table element in string format
    */
   function safeAttrValue(value) {
-    return value ? value : 'n/a';
+    return value !== null && value !== undefined ? value : 'n/a';
   }
 
   /**
@@ -340,6 +340,29 @@ require([
   };
 
   /**
+   * Create and return a listNode item.
+   *
+   * @param {Object} attributes - Feature attributes
+   * @return {string} The content
+   */
+  function listNodeItemContent(attributes) {
+    let content = 'In-Active Grid';
+    if (attributes.ALERT_LEVEL) {
+      content =
+        safeAttrValue(attributes.ALERT_LEVEL)
+        + ' | '
+        + safeAttrValue(attributes.TOWN)
+        + ' | '
+        + safeAttrValue(attributes.MEASURE)
+        + ' | '
+        + safeAttrValue(attributes.POSTCODE)
+        + ' | '
+        + safeAttrValue(attributes.DAM_AREA);
+    }
+    return content;
+  }
+
+  /**
    * Clear and build listNode.
    */
   function listNodeReset() {
@@ -357,11 +380,7 @@ require([
         fragment.appendChild(
           listNodeCreateItem(
             index,
-            safeAttrValue(attributes.ALERT_LEVEL)
-            + ' | '
-            + safeAttrValue(attributes.TOWN)
-            + ' | '
-            + safeAttrValue(attributes.DAM_AREA),
+            listNodeItemContent(attributes),
             safeAttrValue(attributes.ALERT_LEVEL)
           )
         );
