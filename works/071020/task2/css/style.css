@@ -1,0 +1,205 @@
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin : 0;
+  height : 100%;
+  width  : 100%;
+}
+
+:focus {
+  outline: none !important;
+}
+
+#sensorsFilter {
+  height: 185px;
+  width : 130px;
+}
+
+.filter-item {
+  width         : 100%;
+  padding       : 12px;
+  text-align    : center;
+  vertical-align: baseline;
+  cursor        : pointer;
+  height        : 40px;
+  color         : #fff;
+}
+
+.filter-item:focus {
+  color: black;
+}
+
+.filter-item:hover {
+  color: black;
+}
+
+#titleDiv {
+  padding: 10px;
+}
+
+#titleText {
+  font-size     : 20pt;
+  font-weight   : 60;
+  padding-bottom: 10px;
+}
+
+.panel-container {
+  position: relative;
+  width   : 100%;
+  height  : 100%;
+}
+
+.panel-side {
+  padding   : 2px;
+  box-sizing: border-box;
+  width     : 100%;
+  height    : 100%;
+  position  : absolute;
+  top       : 0;
+  right     : 0;
+  color     : #fff;
+  overflow  : auto;
+  z-index   : 60;
+}
+
+.panel-side h3 {
+  padding: 0 20px;
+  margin : 20px 0;
+}
+
+.panel-side ul {
+  list-style: none;
+  margin    : 0;
+  padding   : 0;
+}
+
+.panel-side li {
+  list-style: none;
+  padding   : 10px 20px;
+}
+
+.panel-result {
+  cursor: pointer;
+  margin: 2px 0;
+}
+
+.panel-result:hover,
+.panel-result:focus {
+  color: black;
+}
+
+.cluster-max-zoom-level-wrapper {
+  margin-top: 1rem;
+  width     : 15rem;
+}
+
+#clusteringUntilZoomLevel {
+  margin-top: .5rem;
+  width     : 15rem;
+  height    : 2.5rem;
+}
+
+#currentZoomLevelValue {
+  color        : red;
+  font-weight  : bold;
+  font-size    : large;
+  margin-top   : .5rem;
+  margin-bottom: .5rem;
+}
+
+.mt-3 {
+  margin-top: 3rem;
+}
+
+#applicationDiv {
+  width         : 100%;
+  height        : 100%;
+  display       : flex;
+  flex-direction: column;
+  overflow      : hidden;
+}
+
+#viewDiv {
+  width : 100%;
+  height: 100%;
+  flex  : 1 1 auto;
+  order : 1;
+}
+
+.gradient-45deg-light-grey-grey
+{
+    background: #cfd8dc;
+    background: -webkit-linear-gradient(45deg, grey, lightgrey) !important;
+    background:         linear-gradient(45deg, grey, lightgrey) !important;
+}
+
+div[data-layer-title="Sus uu live cam monit wgs master view"] .esri-popup__content {
+  overflow: hidden !important;
+}
+
+div[data-layer-title="Sus uu live cam monit wgs master view"] .esri-popup__main-container {
+  min-width: 445px !important;
+}
+
+.popup-embed-content{
+  width: 435px;
+  height: 345px;
+  align-content: center;
+}
+
+.anchor {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.popup-embed-content .anchor {
+  width: 415px;
+  margin-bottom: 10px;
+}
+
+.popup-embed-content .video-embed-container {
+  width: 415px;
+  height: 305px;
+  overflow: hidden;
+}
+
+#sensorsFilterContainer {
+  background: white;
+  padding   : 1rem;
+  height: 215px;
+}
+
+#raingridFilterContainer {
+  background: white;
+  padding   : 1rem;
+  height: 305px;
+}
+
+.alert-filter-list-3 {
+  height: 155px;
+  width : 130px;
+}
+
+.alert-filter-list-5 {
+  height: 215px;
+  width : 130px;
+}
+
+.alert-filter-item {
+  width         : 100%;
+  padding       : 12px;
+  text-align    : center;
+  vertical-align: baseline;
+  cursor        : pointer;
+  height        : 40px;
+  color         : #fff;
+}
+
+.alert-filter-item:focus {
+  color: black;
+}
+
+.alert-filter-item:hover {
+  color: black;
+}

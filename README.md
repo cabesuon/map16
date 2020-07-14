@@ -278,5 +278,70 @@
         </ol>
       </td>
     </tr>
+    <tr>
+      <td>07/10/2020</td>
+      <td>
+        <ul>
+          <li>
+            <a href="./071020/inputs/task1/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+          <li>
+            <a href="./071020/inputs/task2/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+        </ul>
+      </td>
+      <td>
+        <ol>
+          <li>
+            Task 1
+            <ul>
+              <li>Make sure the pop is showing responsive iframe embed.</li>
+              <li>No Filters, just standard, home, legend, search.</li>
+              <li>Sidebar showing list of cameras. List in red.</li>
+              <li>Dynamic calculation in top right tab (Live Map Number), showing feature count in current mapview.</li>
+            </ul>
+          </li>
+          <li>
+            Task 2
+            <ul>
+              <li>Toggle 4 layers on and off.</li>
+              <li>Clustering on 3 point layers.</li>
+              <li>
+                Combine mapview and sidepanel with;
+                <ul>
+                  <li>Point Sensors – In Sidebar – “sensorlayer”</li>
+                  <li>Rain grid – In Sidebar – “raingridlayer”</li>
+                  <li>Point Camera – In Sidebar “cameralayer” (Same Popup from task1)</li>
+                  <li>Point Gateways – In Sidebar “gatewaylayer”</li>
+                </ul>
+                (One colour for each layer in sidepanel)
+              </li>
+              <li>Filter 1 - Option Of Alert Level – Point Sensors (Same as before)</li>
+              <li>Filter 2 – Option Of Alert Level – Rain Grid (Same As Before)</li>
+            </ul>
+          </li>
+        </ol>
+      </td>
+      <td>
+        <ol>
+          <li>
+            <a href="./070320/task1/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+          <li>
+            <a href="./070320/task2/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+        </ol>
+      </td>
+      <td>
+        <ol>
+          <li>
+            3:00
+          </li>
+          <li>
+            7:00
+          </li>
+        </ol>
+      </td>
+    </tr>
   </tbody>
 </table>

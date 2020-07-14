@@ -1,0 +1,102 @@
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin : 0;
+  height : 100%;
+  width  : 100%;
+}
+
+:focus {
+  outline: none !important;
+}
+
+.panel-container {
+  position: relative;
+  width   : 100%;
+  height  : 100%;
+}
+
+.panel-side {
+  padding   : 2px;
+  box-sizing: border-box;
+  width     : 100%;
+  height    : 100%;
+  position  : absolute;
+  top       : 0;
+  right     : 0;
+  color     : #fff;
+  overflow  : auto;
+  z-index   : 60;
+}
+
+.panel-side h3 {
+  padding: 0 20px;
+  margin : 20px 0;
+}
+
+.panel-side ul {
+  list-style: none;
+  margin    : 0;
+  padding   : 0;
+}
+
+.panel-side li {
+  list-style: none;
+  padding   : 10px 20px;
+}
+
+.panel-result {
+  cursor: pointer;
+  margin: 2px 0;
+}
+
+.panel-result:hover,
+.panel-result:focus {
+  color: black;
+}
+
+#infoDiv {
+  background: white;
+  padding   : 1rem;
+}
+
+#applicationDiv {
+  width         : 100%;
+  height        : 100%;
+  display       : flex;
+  flex-direction: column;
+  overflow      : hidden;
+}
+
+#viewDiv {
+  width : 100%;
+  height: 100%;
+  flex  : 1 1 auto;
+  order : 1;
+}
+
+.esri-popup__main-container {
+  min-width: 435px;
+}
+
+.esri-popup__content {
+  overflow: hidden;
+}
+
+.popup-content{
+  width: 435px;
+  height: 345px;
+  align-content: center;
+}
+
+.camera-anchor {
+  width: 400px;
+  margin-bottom: 10px;
+}
+
+.camera-embed-container {
+  width: 415px;
+  height: 305px;
+  overflow: hidden;
+}
