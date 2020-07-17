@@ -129,9 +129,9 @@ body,
 
 .gradient-45deg-light-grey-grey
 {
-    background: #cfd8dc;
-    background: -webkit-linear-gradient(45deg, grey, lightgrey) !important;
-    background:         linear-gradient(45deg, grey, lightgrey) !important;
+  background: #cfd8dc;
+  background: -webkit-linear-gradient(45deg, grey, lightgrey) !important;
+  background:         linear-gradient(45deg, grey, lightgrey) !important;
 }
 
 div[data-layer-title="Sus uu live cam monit wgs master view"] .esri-popup__content {
@@ -167,23 +167,54 @@ div[data-layer-title="Sus uu live cam monit wgs master view"] .esri-popup__main-
 #sensorsFilterContainer {
   background: white;
   padding   : 1rem;
-  height: 205px;
+  height: 215px;
 }
 
 #raingridFilterContainer {
   background: white;
   padding   : 1rem;
-  height: 285px;
+  height: 305px;
 }
 
 .alert-filter-list-3 {
-  height: 145px;
+  height: 155px;
   width : 130px;
 }
 
 .alert-filter-list-5 {
   height: 215px;
   width : 130px;
+}
+
+.alert-filter-item {
+  width         : 100%;
+  padding       : 12px;
+  text-align    : center;
+  vertical-align: baseline;
+  cursor        : pointer;
+  height        : 40px;
+  color         : #fff;
+}
+
+.alert-filter-item {
+  border-style: solid;
+  border-color: grey;
+  border-width: 1px;
+  color: grey;
+}
+.alert-filter-item:focus,
+.alert-filter-item:hover {
+  border-color: black;
+  border-width: 1px;
+  color: black;
+}
+.alert-filter-item-active {
+  border-color: black;
+  border-width: 0px;
+  color: white;
+  background: #cfd8dc;
+  background: -webkit-linear-gradient(45deg, grey, lightgrey) !important;
+  background:         linear-gradient(45deg, grey, lightgrey) !important;
 }
 
 .esri-expand__icon-number {

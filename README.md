@@ -279,6 +279,55 @@
       </td>
     </tr>
     <tr>
+      <td>07/03/2020</td>
+      <td>
+        <a href="./070320/inputs/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+            Add information from two layers in the side panel (Currently only showing 1):
+            (i) sus_uu_sensor_pre_install_wgs_master/FeatureServer/0,
+            (ii) sus_uu_gateway_pre_install_surveys_view/FeatureServer/0.
+          </li>
+          <li>
+            Add layer turn on and off using the buttons shown below.
+          </li>
+          <li>
+            Within “Find Address Or Place” search be able to search from an attribute “THOROUGHFARE” in the sus_uu_sensor_pre_install_wgs_master/FeatureServer/0 layer.
+          </li>
+          <li>
+            Add a measurement widget into the map view with an expand.
+          </li>
+          <li>
+            Add a filter by ‘Creation Date” into the current filter widget.
+          </li>
+        </ol>
+      </td>
+      <td>
+        <a href="./070320/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>
+            1:00
+          </li>
+          <li>
+            0:30
+          </li>
+          <li>
+            0:30
+          </li>
+          <li>
+            1:00
+          </li>
+          <li>
+            3:00
+          </li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
       <td>07/10/2020</td>
       <td>
         <ul>
@@ -325,10 +374,10 @@
       <td>
         <ol>
           <li>
-            <a href="./070320/task1/index.html" target="_blank">map16 - Data Dashboard</a>
+            <a href="./071020/task1/index.html" target="_blank">map16 - Data Dashboard</a>
           </li>
           <li>
-            <a href="./070320/task2/index.html" target="_blank">map16 - Data Dashboard</a>
+            <a href="./071020/task2/index.html" target="_blank">map16 - Data Dashboard</a>
           </li>
         </ol>
       </td>
@@ -341,6 +390,92 @@
             7:00
           </li>
         </ol>
+      </td>
+    </tr>
+    <tr>
+      <td>07/14/2020</td>
+      <td>
+        Corrections and extras to several works
+      </td>
+      <td>
+        I have listed below the changes./fix’s. I have also added the date you did the works based on your overview page;
+        <ol>
+          <li>
+            07/10/20
+            <ul>
+              <li>2nd Filter Rain Grid – Not Filtering map.</li>
+              <li>Add visual on filter – Showing if filter is active.</li>
+              <li>Remove any Inactive rain grids from side panel.</li>
+              <li>Add dynamic top information (As per camera system).</li>
+            </ul>
+          </li>
+          <li>
+            07/03/20
+            <ul>
+              <li>Add dynamic top information (As per camera system).</li>
+            </ul>
+          </li>
+          <li>
+            06/26/20
+            <ul>
+              <li>Add dynamic top information (As per camera system).</li>
+            </ul>
+          </li>
+          <li>
+            06/05/20
+            <ul>
+              <li>Add dynamic top information (As per camera system).</li>
+            </ul>
+          </li>
+        </ol>
+      </td>
+      <td>
+        <ol>
+          <li>
+            <a href="./071020/task2/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+          <li>
+            <a href="./070320/task2/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+          <li>
+            <a href="./062620/task1/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+          <li>
+            <a href="./060520/task2/index.html" target="_blank">map16 - Data Dashboard</a>
+          </li>
+        </ol>
+      </td>
+      <td>
+        <ol>
+          <li>
+            1:30
+          </li>
+          <li>
+            0:10
+          </li>
+          <li>
+            0:10
+          </li>
+          <li>
+            0:10
+          </li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td>07/15/2020</td>
+      <td>
+        <a href="./071520/inputs/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        I was wondering if we could swap out the gateway layer and replace it with a river sensor layer. This is a now a polygon layer instead of a point layer.<br>
+        I have added all the information to the JavaScript file. Including URL and fields. The only thing we need is an analytics URL button the same as the rain grid & sensors.
+      </td>
+      <td>
+        <a href="./071520/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        1:00
       </td>
     </tr>
   </tbody>

@@ -646,6 +646,25 @@ require([
   };
 
   /**
+   * Update UI with the number of features of layer in current map view.
+   *
+   * @param {FeatureLayer} layer - The layer
+   * @param {number} value - The features number
+   */
+  function updateLiveMapNumber(layer, value) {
+    let id = '';
+    switch(layer) {
+      case sensorsLayer:
+        id = 'sensorsMapNumberSpan';
+      break;
+      case gatewaysLayer:
+        id = 'gatewaysMapNumberSpan';
+      break;
+    }
+    document.getElementById(id).innerText = value;
+  }
+
+  /**
    * Clear and build listNode.
    */
   function listNodeReset() {
@@ -653,28 +672,22 @@ require([
     if (sensorsLayer.visible && sensorsGraphics) {
       sensorsGraphics.sort(sensorsCompareFeatures);
       graphics = graphics.concat(sensorsGraphics);
+      updateLiveMapNumber(sensorsLayer, sensorsGraphics.length);
     }
     if (gatewaysLayer.visible && gatewaysGraphics) {
       graphics = graphics.concat(gatewaysGraphics);
+      updateLiveMapNumber(gatewaysLayer, gatewaysGraphics.length);
     }
 
     const fragment = document.createDocumentFragment();
     graphics.forEach(function (feature, index) {
-      // const creationDate = normDate(feature.attributes.CreationDate);
-      // if (dateCompare(timeSlider.timeExtent.start, creationDate) < 1
-      //   &&
-      //   dateCompare(timeSlider.timeExtent.end, creationDate) > -1
-      // ) {
-        fragment.appendChild(
-          listNodeCreateItem(
-            index,
-            listNodeCreateItemContent(feature),
-            feature.layer
-          )
-        );
-      // } else {
-      //   console.log(`${dateCompare(timeSlider.timeExtent.end, creationDate)} ${timeSlider.timeExtent.end} ${creationDate}`);
-      // }
+      fragment.appendChild(
+        listNodeCreateItem(
+          index,
+          listNodeCreateItemContent(feature),
+          feature.layer
+        )
+      );
     });
     listNode.innerHTML = '';
     listNode.appendChild(fragment);

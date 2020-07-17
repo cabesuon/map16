@@ -402,24 +402,24 @@ require([
 
   /*
   
-  GATEWAYS LAYER
+  riversensors LAYER
   
   */
 
   /**
    * @type {Graphic[]}
    */
-  let gatewaysGraphics = [];
+  let riversensorsGraphics = [];
 
   /**
    * @type {LayerView}
    */
-  let gatewaysLayerView = null;
+  let riversensorsLayerView = null;
 
   /**
    * @type {ClusterConfig}
    */
-  const gatewaysClusterConfig = {
+  const riversensorsClusterConfig = {
     type: 'cluster',
     popupTemplate: {
       content: [
@@ -452,7 +452,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function gatewaysPopupTemplateContent(feature) {
+  function riversensorsPopupTemplateContent(feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
@@ -488,45 +488,48 @@ require([
   /**
    * @type {PopupTemplate}
    */
-  const gatewaysPopupTemplate = {
+  const riversensorsPopupTemplate = {
     title: '{ObjectId}',
     lastEditInfoEnabled: false,
-    content: gatewaysPopupTemplateContent,
+    content: riversensorsPopupTemplateContent,
     outFields: [
-      'ObjectId',
-      'survey_id',
-      'uu_building',
-      'power_source',
-      'socket_type',
-      'CreationDate'
+       'ALERT_LEVEL',
+        'RIVER_LEVEL',
+        'PERCENT_RIVER_LEVEL',
+        'POSTCODE','DAM_AREA',
+        'TOWN',
+        'DATE_ID',
+        'ANALYTICS_URL'
     ]
   };
   
   /**
    * @type {FeatureLayer}
    */
-  const gatewaysLayer = new FeatureLayer({
+  const riversensorsLayer = new FeatureLayer({
     url:
-      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_gateway_pre_install_surveys_view/FeatureServer/0',
-    featureReduction: gatewaysClusterConfig,
-    popupTemplate: gatewaysPopupTemplate,
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/uu_riv_ntwrk_wgs_master/FeatureServer/0',
+    featureReduction: riversensorsClusterConfig,
+    popupTemplate: riversensorsPopupTemplate,
     outFields: [
-      'ObjectId',
-      'survey_id',
-      'uu_building',
-      'power_source',
-      'socket_type',
-      'CreationDate'
+      'ALERT_LEVEL',
+    'RIVER_LEVEL',
+    'PERCENT_RIVER_LEVEL',
+        'POSTCODE',
+        'DAM_AREA',
+        'TOWN',
+        'DATE_ID',
+        'ANALYTICS_URL'
     ]
   });
 
   /**
-   * Create and return the content of a gateway listNode item.
+   * Create and return the content of a riversensors listNode item.
    *
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function gatewaysListNodeItemContent(attributes) {
+  function riversensorsListNodeItemContent(attributes) {
     return safeAttrValue(attributes.survey_id)
       + ' | '
       + safeAttrValue(attributes.power_source)
@@ -560,7 +563,7 @@ require([
       raingridLayer,
       camerasLayer,
       sensorsLayer,
-      gatewaysLayer
+      riversensorsLayer
     ]
   });
 
@@ -651,27 +654,25 @@ require([
     'top-right'
   );
 
-  const sensorsFilterExpand = new Expand({
-    expandTooltip: 'Filter Sensors',
-    expanded: false,
-    view: view,
-    content: document.getElementById('sensorsFilterContainer'),
-    expandIconClass: 'esri-icon-filter'
-  });
   view.ui.add(
-    sensorsFilterExpand,
+    new Expand({
+      expandTooltip: 'Filter Sensors',
+      expanded: false,
+      view: view,
+      content: document.getElementById('sensorsFilterContainer'),
+      expandIconClass: 'esri-icon-filter'
+    }),
     'top-left'
   );
 
-  const raingridFilterExpand = new Expand({
-    expandTooltip: 'Filter Rain Grid',
-    expanded: false,
-    view: view,
-    content: document.getElementById('raingridFilterContainer'),
-    expandIconClass: 'esri-icon-filter'
-  });
   view.ui.add(
-    raingridFilterExpand,
+    new Expand({
+      expandTooltip: 'Filter Rain Grid',
+      expanded: false,
+      view: view,
+      content: document.getElementById('raingridFilterContainer'),
+      expandIconClass: 'esri-icon-filter'
+    }),
     'top-left'
   );
 
@@ -748,7 +749,6 @@ require([
         'gradient-45deg-amber-amber',
         filter
       );
-      updateLiveMapNumber(sensorsLayer, sensorsFragment.childElementCount);
       listNode.appendChild(sensorsFragment);
     }
 
@@ -758,11 +758,7 @@ require([
         filter = function(f) {
           return f.attributes.ALERT_LEVEL === selectedRainGridLevel
         };
-      } else {
-        filter = function (f) {
-          return f.attributes.ALERT_LEVEL;
-        };
-      }
+      } 
       raingridFragment = listNodeCreateFragment(
         raingridGraphics,
         'RAINGRID',
@@ -770,7 +766,6 @@ require([
         'gradient-45deg-light-blue-cyan',
         filter
       );
-      updateLiveMapNumber(raingridLayer, raingridFragment.childElementCount);
       listNode.appendChild(raingridFragment);
     }
 
@@ -782,47 +777,20 @@ require([
         'gradient-45deg-red-red',
         filter
       );
-      updateLiveMapNumber(camerasLayer, camerasFragment.childElementCount);
       listNode.appendChild(camerasFragment);
     }
 
-    if (gatewaysLayer.visible) {
-      gatewaysFragment = listNodeCreateFragment(
-        gatewaysGraphics,
-        'GATEWAY',
-        gatewaysListNodeItemContent,
+    if (riversensorsLayer.visible) {
+      riversensorsFragment = listNodeCreateFragment(
+        riversensorsGraphics,
+        'RIVERS',
+        riversensorsListNodeItemContent,
         'gradient-45deg-indigo-purple',
         filter
       );
-      updateLiveMapNumber(gatewaysLayer, gatewaysFragment.childElementCount);
-      listNode.appendChild(gatewaysFragment);
+      listNode.appendChild(riversensorsFragment);
     }
   };
-
-  /**
-   * Update UI with the number of features of layer in current map view.
-   *
-   * @param {FeatureLayer} layer - The layer
-   * @param {number} value - The features number
-   */
-  function updateLiveMapNumber(layer, value) {
-    let id = '';
-    switch(layer) {
-      case sensorsLayer:
-        id = 'sensorsMapNumberSpan';
-      break;
-      case raingridLayer:
-        id = 'raingridMapNumberSpan';
-      break;
-      case camerasLayer:
-        id = 'camerasMapNumberSpan';
-      break;
-      case gatewaysLayer:
-        id = 'gatewaysMapNumberSpan';
-      break;
-    }
-    document.getElementById(id).innerText = value;
-  }
 
   view.whenLayerView(sensorsLayer).then(function (layerView) {
     sensorsLayerView = layerView;
@@ -887,8 +855,8 @@ require([
     });
   });
 
-  view.whenLayerView(gatewaysLayer).then(function (layerView) {
-    gatewaysLayerView = layerView;
+  view.whenLayerView(riversensorsLayer).then(function (layerView) {
+    riversensorsLayerView = layerView;
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -898,7 +866,7 @@ require([
             orderByFields: ['ObjectId']
           })
           .then(function (results) {
-            gatewaysGraphics = results.features;
+            riversensorsGraphics = results.features;
             listNodeReset();
           })
           .catch(function (error) {
@@ -932,8 +900,8 @@ require([
         result = camerasGraphics[parseInt(arr[1], 10)];
         center = [result.geometry.longitude, result.geometry.latitude];
       break;
-      case 'GATEWAY':
-        result = gatewaysGraphics[parseInt(arr[1], 10)];
+      case 'RIVERS':
+        result = riversensorsGraphics[parseInt(arr[1], 10)];
         center = [result.geometry.longitude, result.geometry.latitude];
       break;
     }
@@ -959,23 +927,6 @@ require([
 
   listNode.addEventListener('click', listNodeClickHandler);
 
-  /**
-   * Update filter button active property.
-   *
-   * @param {string} tag
-   * @param {HTMLButtonElement} btn
-   */
-  function updateAlertFilterButtonActive(tag, btn) {
-    // remove active from all items
-    document.querySelectorAll(`button[${tag}]`).forEach(
-      node => node.classList.remove('active')
-    );
-    // add active to selected item
-    if (btn) {
-      btn.classList.add('active');
-    }
-  }
-
   // sensors filter
 
   /**
@@ -984,21 +935,15 @@ require([
    * @param {MouseEvent} event
    */
   function sensorsElementClickHandler(event) {
-    updateAlertFilterButtonActive('data-sensor', this);
     selectedSensorLevel = event.currentTarget.getAttribute('data-sensor');
     sensorsLayerView.filter = {
       where: `current_level='${selectedSensorLevel}'`
     };
     listNodeReset();
-    if (selectedSensorLevel) {
-      sensorsFilterExpand.iconNumber = ' ';
-    } else {
-      sensorsFilterExpand.iconNumber = null;
-    }
     event.stopPropagation();
   };
 
-  document.querySelectorAll('button[data-sensor]').forEach(
+  document.querySelectorAll('div[data-sensor]').forEach(
     node => node.addEventListener('click', sensorsElementClickHandler)
   );
 
@@ -1010,11 +955,9 @@ require([
    * @param {MouseEvent} event
    */
   function sensorsFilterResetClickHandler(event) {
-    updateAlertFilterButtonActive('data-sensor', null);
     sensorsLayerView.filter = null;
     selectedSensorLevel = null;
     listNodeReset();
-    sensorsFilterExpand.iconNumber = null;
   };
 
   document.getElementById('sensorsFilterReset')
@@ -1028,21 +971,15 @@ require([
    * @param {MouseEvent} event
    */
   function raingridElementClickHandler(event) {
-    updateAlertFilterButtonActive('data-raingrid', this);
     selectedRainGridLevel = event.currentTarget.getAttribute('data-raingrid');
-    raingridLayerView.filter = {
+    sensorsLayerView.filter = {
       where: `ALERT_LEVEL='${selectedRainGridLevel}'`
     };
     listNodeReset();
-    if (selectedRainGridLevel) {
-      raingridFilterExpand.iconNumber = ' ';
-    } else {
-      raingridFilterExpand.iconNumber = null;
-    }
     event.stopPropagation();
   };
 
-  document.querySelectorAll('button[data-raingrid]').forEach(
+  document.querySelectorAll('div[data-raingrid]').forEach(
     node => node.addEventListener('click', raingridElementClickHandler)
   );
 
@@ -1054,11 +991,9 @@ require([
    * @param {MouseEvent} event
    */
   function raingridFilterResetClickHandler(event) {
-    updateAlertFilterButtonActive('data-raingrid', null);
     raingridLayerView.filter = null;
     selectedRainGridLevel = null;
     listNodeReset();
-    raingridFilterExpand.iconNumber = null;
   };
 
   document.getElementById('raingridFilterReset')
@@ -1078,8 +1013,8 @@ require([
     camerasLayer.featureReduction =
       newValue > selectedclusteringUntilZoom ? null : clusterConfig;
     
-    gatewaysLayer.featureReduction =
-      newValue > selectedclusteringUntilZoom ? null : gatewaysClusterConfig;
+    riversensorsLayer.featureReduction =
+      newValue > selectedclusteringUntilZoom ? null : riversensorsClusterConfig;
   }
 
   view.watch('zoom', viewZoomChangeHandler);
@@ -1128,8 +1063,8 @@ require([
       case 'CAMERAS':
         toggleSourceVisibility(camerasLayer, toggleCamerasBtn);
       break;
-      case 'GATEWAYS':
-        toggleSourceVisibility(gatewaysLayer, toggleGatewaysBtn);
+      case 'riversensors':
+        toggleSourceVisibility(riversensorsLayer, toggleriversensorsBtn);
       break;
     }
     event.stopPropagation();
@@ -1156,8 +1091,8 @@ require([
   /**
    * @type {HTMLButtonElement}
    */
-  const toggleGatewaysBtn = document.getElementById('toggleGatewaysBtn');
-  updateToggleButtonActiveProp(gatewaysLayer, toggleGatewaysBtn);
+  const toggleriversensorsBtn = document.getElementById('toggleriversensorsBtn');
+  updateToggleButtonActiveProp(riversensorsLayer, toggleriversensorsBtn);
   
   document.querySelectorAll('button[data-source]').forEach(
     node => node.addEventListener('click', sourceElementClickHandler)

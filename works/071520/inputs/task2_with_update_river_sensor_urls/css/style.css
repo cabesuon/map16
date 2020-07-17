@@ -167,17 +167,17 @@ div[data-layer-title="Sus uu live cam monit wgs master view"] .esri-popup__main-
 #sensorsFilterContainer {
   background: white;
   padding   : 1rem;
-  height: 205px;
+  height: 215px;
 }
 
 #raingridFilterContainer {
   background: white;
   padding   : 1rem;
-  height: 285px;
+  height: 305px;
 }
 
 .alert-filter-list-3 {
-  height: 145px;
+  height: 155px;
   width : 130px;
 }
 
@@ -186,9 +186,20 @@ div[data-layer-title="Sus uu live cam monit wgs master view"] .esri-popup__main-
   width : 130px;
 }
 
-.esri-expand__icon-number {
-  background-color: lightsalmon;
-  border-radius: 50%;
-  height: 10px;
-  width: 10px;
+.alert-filter-item {
+  width         : 100%;
+  padding       : 12px;
+  text-align    : center;
+  vertical-align: baseline;
+  cursor        : pointer;
+  height        : 40px;
+  color         : #fff;
+}
+
+.alert-filter-item:focus {
+  color: black;
+}
+
+.alert-filter-item:hover {
+  color: black;
 }

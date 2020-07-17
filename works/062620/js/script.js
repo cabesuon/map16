@@ -363,11 +363,33 @@ require([
   }
 
   /**
+   * Update UI with the number of features by alert level in current map view.
+   *
+   * @param {{'Red Alert': number,'Amber Alert': number,'Green Alert': number,'No Alert': number,}} level - Alert level
+   */
+  function updateLiveMapNumber(alertLevelCount) {
+    document.getElementById('redAlertMapNumberSpan')
+      .innerText =alertLevelCount['Red Alert'];
+    document.getElementById('amberAlertMapNumberSpan')
+      .innerText = alertLevelCount['Amber Alert'];
+    document.getElementById('greenAlertMapNumberSpan')
+      .innerText = alertLevelCount['Green Alert'];
+    document.getElementById('noAlertMapNumberSpan')
+      .innerText = alertLevelCount['No Alert'];
+  }
+
+  /**
    * Clear and build listNode.
    */
   function listNodeReset() {
     if (!graphics) {
       return;
+    }
+    const alertLevelCount = {
+      'Red Alert': 0,
+      'Amber Alert': 0,
+      'Green Alert': 0,
+      'No Alert': 0
     }
     const fragment = document.createDocumentFragment();
     graphics.sort(compareFeatures);
@@ -377,6 +399,9 @@ require([
         !selectedSeason ||
         attributes.ALERT_LEVEL === selectedSeason
       ) {
+        if (alertLevelCount.hasOwnProperty(attributes.ALERT_LEVEL)) {
+          alertLevelCount[attributes.ALERT_LEVEL] ++;
+        }
         fragment.appendChild(
           listNodeCreateItem(
             index,
@@ -388,6 +413,7 @@ require([
     });
     listNode.innerHTML = '';
     listNode.appendChild(fragment);
+    updateLiveMapNumber(alertLevelCount);
   };
 
   view.whenLayerView(layer).then(function (layerView) {

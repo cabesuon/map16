@@ -40,7 +40,7 @@
                     </div>
                     <div class="bg-menu-dark p-t-20 p-b-20 map16-corner hover-caption">
                       <h1 class="text-center text-white m-b-25 font-montserrat">
-                        <i class="fa fa-warning"></i> 1
+                        <i class="fa fa-warning"></i> <span id="sensorsMapNumberSpan">-</span>
                       </h1>
                       <p class="text-master-light text-center ">
                       </p>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="bg-menu-dark p-t-20 p-b-20 map16-corner hover-caption">
                       <h1 class="text-center text-white m-b-25 font-montserrat">
-                        <i class="fa fa-exclamation"></i> 14
+                        <i class="fa fa-exclamation"></i> <span id="raingridMapNumberSpan">-</span>
                       </h1>
                       <p class="text-master-light text-center ">
                       </p>
@@ -86,7 +86,7 @@
                     </div>
                     <div class="bg-menu-dark p-t-20 p-b-20 map16-corner hover-caption">
                       <h1 class="text-center text-white m-b-25 font-montserrat">
-                        <i class="fa fa-check-square-o"></i> 7
+                        <i class="fa fa-check-square-o"></i> <span id="camerasMapNumberSpan">-</span>
                       </h1>
                       <p class="text-master-light text-center ">
                       </p>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="bg-menu-dark p-t-20 p-b-20 map16-corner hover-caption">
                       <h1 class="text-center text-white m-b-25 font-montserrat">
-                        <i class="fa  fa-cloud"></i> 5
+                        <i class="fa  fa-cloud"></i> <span id="gatewaysMapNumberSpan">-</span>
                       </h1>
                       <p class="text-master-light text-center ">
                       </p>
@@ -159,12 +159,12 @@
                         <br>
                         <div id="sensorsFilterContainer" class="esri-widget">
                           <div class="esri-widget alert-filter-list-3">
-                            <div class="alert-filter-item visible-season gradient-45deg-red-red m-b-5"
-                            data-sensor="High">High Alert</div>
-                            <div class="alert-filter-item visible-season gradient-45deg-amber-amber m-b-5"
-                            data-sensor="Medium">Medium Alert</div>
-                            <div class="alert-filter-item visible-season gradient-45deg-green-teal m-b-20"
-                            data-sensor="Low">Low Alert</div>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-5"
+                            data-sensor="High">High Alert</button>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-5"
+                            data-sensor="Medium">Medium Alert</button>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-20"
+                            data-sensor="Low">Low Alert</button>
                             <button id="sensorsFilterReset"
                             class="btn btn-bordered btn-cons btn-primary full-width">Reset filter</button>
                           </div>
@@ -172,16 +172,16 @@
 
                         <div id="raingridFilterContainer" class="esri-widget">
                           <div class="esri-widget alert-filter-list-5">
-                            <div class="alert-filter-item visible-season gradient-45deg-red-red m-b-5"
-                            data-raingrid="Red Alert">Red Alert</div>
-                            <div class="alert-filter-item visible-season gradient-45deg-amber-amber m-b-5"
-                            data-raingrid="Amber Alert">Amber Alert</div>
-                            <div class="alert-filter-item visible-season gradient-45deg-green-teal m-b-5"
-                            data-raingrid="Green Alert">Green Alert</div>
-                            <div class="alert-filter-item visible-season gradient-45deg-light-blue-cyan m-b-5"
-                            data-raingrid="Blue Alert">Blue Alert</div>
-                            <div class="alert-filter-item visible-season gradient-45deg-blue-grey-blue m-b-20"
-                            data-raingrid="No Alert">No Alert</div>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-5"
+                            data-raingrid="Red Alert">Red Alert</button>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-5"
+                            data-raingrid="Amber Alert">Amber Alert</button>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-5"
+                            data-raingrid="Green Alert">Green Alert</button>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-5"
+                            data-raingrid="Blue Alert">Blue Alert</button>
+                            <button class="btn btn-bordered btn-cons btn-default full-width m-b-20"
+                            data-raingrid="No Alert">No Alert</button>
                             <button id="raingridFilterReset"
                             class="btn btn-bordered btn-cons btn-primary full-width">Reset filter</button>
                           </div>

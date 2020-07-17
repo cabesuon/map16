@@ -316,11 +316,33 @@ require([
   };
 
   /**
+   * Update UI with the number of features by alert level in current map view.
+   *
+   * @param {{'Very High': number,'High': number,'Medium': number,'Low': number,}} level - Alert level
+   */
+  function updateLiveMapNumber(alertLevelCount) {
+    document.getElementById('veryHighAlertMapNumberSpan')
+      .innerText =alertLevelCount['Very High'];
+    document.getElementById('highAlertMapNumberSpan')
+      .innerText = alertLevelCount['High'];
+    document.getElementById('mediumAlertMapNumberSpan')
+      .innerText = alertLevelCount['Medium'];
+    document.getElementById('lowAlertMapNumberSpan')
+      .innerText = alertLevelCount['Low'];
+  }
+
+  /**
    * Clear and build listNode.
    */
   function listNodeReset() {
     if (!graphics) {
       return;
+    }
+    const alertLevelCount = {
+      'Very High': 0,
+      'High': 0,
+      'Medium': 0,
+      'Low': 0
     }
     const fragment = document.createDocumentFragment();
     graphics.sort(compareFeatures);
@@ -330,6 +352,9 @@ require([
         !selectedSeason ||
         attributes.current_level === selectedSeason
       ) {
+        if (alertLevelCount.hasOwnProperty(attributes.current_level)) {
+          alertLevelCount[attributes.current_level] ++;
+        }
         fragment.appendChild(
           listNodeCreateItem(
             index,
@@ -345,6 +370,7 @@ require([
     });
     listNode.innerHTML = '';
     listNode.appendChild(fragment);
+    updateLiveMapNumber(alertLevelCount);
   };
 
   view.whenLayerView(layer).then(function (layerView) {
