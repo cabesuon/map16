@@ -751,7 +751,7 @@ require([
       updateLiveMapNumber(sensorsLayer, sensorsFragment.childElementCount);
       listNode.appendChild(sensorsFragment);
     }
-
+    filter = null;
     if (raingridLayer.visible) {
       raingridGraphics;
       if (selectedRainGridLevel) {
@@ -773,7 +773,7 @@ require([
       updateLiveMapNumber(raingridLayer, raingridFragment.childElementCount);
       listNode.appendChild(raingridFragment);
     }
-
+    filter = null;
     if (camerasLayer.visible) {
       camerasFragment = listNodeCreateFragment(
         camerasGraphics,
@@ -785,7 +785,7 @@ require([
       updateLiveMapNumber(camerasLayer, camerasFragment.childElementCount);
       listNode.appendChild(camerasFragment);
     }
-
+    filter = null;
     if (gatewaysLayer.visible) {
       gatewaysFragment = listNodeCreateFragment(
         gatewaysGraphics,
