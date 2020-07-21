@@ -478,5 +478,37 @@
         1:00
       </td>
     </tr>
+    <tr>
+      <td>07/19/2020</td>
+      <td>
+        <a href="./071920/inputs/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ol>
+          <li>I really like the DIV element design for the filter rain grid below. Would it be possible to add the same style for the sensor filter below.</li>
+          <li>We also would like to change the design of each button. At the moment it seems like there is one design for all 3 buttons. However, in their separate views, we have changed each button to look like the below;</li>
+          <li>I was also wondering if you noticed an issues with loading speeds of the map/sidepanel/numbers at the top. Its not to bad, once it loads, but seems hang a little.</li>
+          <li>
+            <b>Extras</b>,
+            <ul>
+              <li>Fix: zoom to river features. Now center is the centriod of the polygon.</li>
+              <li>Fix: map live number not taking into account layer visibility.</li>
+              <li>Toggle buttons same layer correspondance order that big buttons</li>
+            </ul>
+          </li>
+        </ol>
+      </td>
+      <td>
+        <a href="./071920/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        <ul>
+          <li>0:10</li>
+          <li>Waiting for styles</li>
+          <li>In process</li>
+          <li>0:20</li>
+        </ul>
+      </td>
+    </tr>
   </tbody>
 </table>
