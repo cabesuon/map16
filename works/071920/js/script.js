@@ -13,7 +13,7 @@ require([
   /**
    * @type {number}
    */
-  let selectedclusteringUntilZoom = 11;
+  const selectedclusteringUntilZoom = 11;
 
   /**
    * @type {ClusterConfig}
@@ -36,10 +36,11 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The anchor element in string format
    */
-  function popupTemplateContentAnchor(url, text) {
-    if (url)
-      return `<a class="btn btn-bordered btn-cons btn-complete anchor" `
-        + `href=${url} target="_blank">${text}</a>`;
+  function popupTemplateContentAnchor (url, text, btnClass) {
+    if (url) {
+      return `<a class="btn btn-bordered btn-cons ${btnClass} anchor" ` +
+        `href=${url} target="_blank"><i class="fa fa-area-chart"></i> ${text}</a>`;
+    }
     return '';
   }
 
@@ -49,7 +50,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function safeAttrValue(value) {
+  function safeAttrValue (value) {
     return value !== null && value !== undefined ? value : 'n/a';
   }
 
@@ -59,12 +60,12 @@ require([
    * @param {Array<{label:string, value:string}>} attrs - Label and values of feature attributes
    * @return {string} -The table element in string format
    */
-  function popupTemplateContentAttrTable(attrs) {
-    let content = `<table class="esri-widget__table"><tbody>`;
+  function popupTemplateContentAttrTable (attrs) {
+    let content = '<table class="esri-widget__table"><tbody>';
     for (const attr of attrs) {
-      content += `<tr><td>${safeAttrValue(attr.label)}</td><td>${safeAttrValue(attr.value)}</td></tr>`
+      content += `<tr><td>${safeAttrValue(attr.label)}</td><td>${safeAttrValue(attr.value)}</td></tr>`;
     }
-    content += `</tbody></table>`;
+    content += '</tbody></table>';
     return content;
   }
 
@@ -74,9 +75,9 @@ require([
   const servicesUrl = 'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services';
 
   /*
-  
+
   POINT SENSORS
-  
+
   */
 
   /**
@@ -120,15 +121,19 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function sensorsPopupTemplateContent(feature) {
+  function sensorsPopupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'Manhole Analytics')
-      + popupTemplateContentAttrTable([
+      popupTemplateContentAnchor(
+        attrs.ANALYTICS_URL,
+        'Manhole Analytics',
+        'btn-complete'
+      ) +
+      popupTemplateContentAttrTable([
         {
           value: safeAttrValue(attrs.ALERT_LEVEL),
           label: 'Alert Level'
@@ -197,19 +202,19 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function sensorsListNodeItemContent(attributes) {
-    return 'Flood Sensor | ' + safeAttrValue(attributes.ALERT_LEVEL)
-      + ' | '
-      + safeAttrValue(attributes.ROAD)
-      + ' | '
-      + safeAttrValue(attributes.TOWN)
-      ;
+  function sensorsListNodeItemContent (attributes) {
+    return 'Flood Sensor | ' + safeAttrValue(attributes.ALERT_LEVEL) +
+      ' | ' +
+      safeAttrValue(attributes.ROAD) +
+      ' | ' +
+      safeAttrValue(attributes.TOWN)
+    ;
   }
 
   /*
-  
+
   RAIN GRID LAYER
-  
+
   */
 
   /**
@@ -233,15 +238,19 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function raingridPopupTemplateContent(feature) {
+  function raingridPopupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'Rain Analytics')
-      + popupTemplateContentAttrTable([
+      popupTemplateContentAnchor(
+        attrs.ANALYTICS_URL,
+        'Rain Analytics',
+        'btn-primary'
+      ) +
+      popupTemplateContentAttrTable([
         {
           value: safeAttrValue(attrs.ALERT_LEVEL),
           label: 'Alert Level'
@@ -276,7 +285,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The title
    */
-  function raingridPopupTemplateTitle(feature) {
+  function raingridPopupTemplateTitle (feature) {
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
@@ -316,24 +325,24 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function raingridListNodeItemContent(attributes) {
+  function raingridListNodeItemContent (attributes) {
     let content = 'In-Active Grid';
     if (attributes.ALERT_LEVEL) {
       content =
-        'Rain Grid | ' + safeAttrValue(attributes.ALERT_LEVEL)
-        + ' | '
-        + safeAttrValue(attributes.ROAD)
-        + ' | '
-        + safeAttrValue(attributes.TOWN)
-
+        'Rain Grid | ' +
+        safeAttrValue(attributes.ALERT_LEVEL) +
+        ' | ' +
+        safeAttrValue(attributes.ROAD) +
+        ' | ' +
+        safeAttrValue(attributes.TOWN);
     }
     return content;
   }
 
   /*
-  
+
   CAMERAS LAYER
-  
+
   */
 
   /**
@@ -342,17 +351,12 @@ require([
   let camerasGraphics = [];
 
   /**
-   * @type {LayerView}
-   */
-  let camerasLayerView = null;
-
-  /**
    * Create and return the content of a feature for PopupTemplate.
    *
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function camerasPopupTemplateContent(feature) {
+  function camerasPopupTemplateContent (feature) {
     const div = document.createElement('div');
     div.className = 'popup-embed-content';
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
@@ -361,12 +365,16 @@ require([
 
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.CAMERA_URL, 'View Video Stream')
-      + `<div class="esri-widget__table"><tbody>`
-      + `<tr><td>`
-      + `<div class="video-embed-container">${safeAttrValue(attrs.CAMERA_EMBED)}</div>`
-      + `</td></tr>`
-      + `</tbody></table>`;
+      popupTemplateContentAnchor(
+        attrs.CAMERA_URL,
+        'View Video Stream',
+        'btn-danger'
+      ) +
+      '<div class="esri-widget__table"><tbody>' +
+      '<tr><td>' +
+      `<div class="video-embed-container">${safeAttrValue(attrs.CAMERA_EMBED)}</div>` +
+      '</td></tr>' +
+      '</tbody></table>';
     return div;
   }
 
@@ -400,18 +408,18 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function camerasListNodeItemContent(attributes) {
-    return 'Camera | '
-      + safeAttrValue(attributes.THOROUGHFARE)
-      + ' | '
-      + safeAttrValue(attributes.TOWN)
-      ;
+  function camerasListNodeItemContent (attributes) {
+    return 'Camera | ' +
+      safeAttrValue(attributes.THOROUGHFARE) +
+      ' | ' +
+      safeAttrValue(attributes.TOWN)
+    ;
   }
 
   /*
-  
+
   RIVER SENSORS LAYER
-  
+
   */
 
   /**
@@ -420,17 +428,12 @@ require([
   let riverSensorsGraphics = [];
 
   /**
-   * @type {LayerView}
-   */
-  let riverSensorsLayerView = null;
-
-  /**
    * Create and return the content of a feature for PopupTemplate.
    *
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function riverSensorsPopupTemplateContent(feature) {
+  function riverSensorsPopupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
@@ -438,8 +441,12 @@ require([
 
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'River Analytics')
-      + popupTemplateContentAttrTable([
+      popupTemplateContentAnchor(
+        attrs.ANALYTICS_URL,
+        'River Analytics',
+        'btn-complete-dark'
+      ) +
+      popupTemplateContentAttrTable([
         {
           value: safeAttrValue(attrs.ALERT_LEVEL),
           label: 'Alert Level'
@@ -464,9 +471,6 @@ require([
           value: safeAttrValue(attrs.DAM_AREA),
           label: 'DAM Area'
         }
-
-
-
       ]);
     return div;
   }
@@ -514,14 +518,14 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function riverSensorsListNodeItemContent(attributes) {
-    return 'River Sensor | ' + safeAttrValue(attributes.ALERT_LEVEL)
-      + ' | '
-      + safeAttrValue(attributes.ROAD)
-      + ' | '
-      + safeAttrValue(attributes.TOWN)
-
-      ;
+  function riverSensorsListNodeItemContent (attributes) {
+    return 'River Sensor | ' +
+      safeAttrValue(attributes.ALERT_LEVEL) +
+      ' | ' +
+      safeAttrValue(attributes.ROAD) +
+      ' | ' +
+      safeAttrValue(attributes.TOWN)
+    ;
   }
 
   /**
@@ -668,7 +672,6 @@ require([
     'top-left'
   );
 
-
   // list
 
   /**
@@ -684,7 +687,7 @@ require([
    * @param {string} bgClass - Background class for item
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem(id, content, bgClass) {
+  function listNodeCreateItem (id, content, bgClass) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
@@ -702,7 +705,7 @@ require([
    * @param {string} bgClass - Background class for item
    * @return {DocumentFragment} The fragment
    */
-  function listNodeCreateFragment(
+  function listNodeCreateFragment (
     graphics, sourceName, listNodeItemContent, bgClass, filter
   ) {
     const fragment = document.createDocumentFragment();
@@ -724,19 +727,19 @@ require([
   /**
    * Clear and build listNode.
    */
-  function listNodeReset() {
+  function listNodeReset () {
     listNode.innerHTML = '';
 
     // sensors
 
-    sensorsFragment = null
+    let sensorsFragment = null;
     let filter = null;
     let sensorsCount = 0;
     if (sensorsLayer.visible) {
       if (selectedSensorLevel) {
         filter = function (f) {
           return f.attributes.ALERT_LEVEL === selectedSensorLevel;
-        }
+        };
       }
       sensorsFragment = listNodeCreateFragment(
         sensorsGraphics,
@@ -751,7 +754,8 @@ require([
     updateLiveMapNumber(sensorsLayer, sensorsCount);
 
     // raingrid
-    raingridFragment = null;
+
+    let raingridFragment = null;
     filter = null;
     let raingridCount = 0;
     if (raingridLayer.visible) {
@@ -778,7 +782,7 @@ require([
 
     // cameras
 
-    camerasFragment = null;
+    let camerasFragment = null;
     filter = null;
     let camerasCount = 0;
     if (camerasLayer.visible) {
@@ -796,7 +800,7 @@ require([
 
     // river sensors
 
-    riverSensorsFragment = null;
+    let riverSensorsFragment = null;
     filter = null;
     let riverSensorsCount = 0;
     if (riverSensorsLayer.visible) {
@@ -819,7 +823,7 @@ require([
    * @param {FeatureLayer} layer - The layer
    * @param {number} value - The features number
    */
-  function updateLiveMapNumber(layer, value) {
+  function updateLiveMapNumber (layer, value) {
     let id = '';
     switch (layer) {
       case sensorsLayer:
@@ -881,7 +885,6 @@ require([
   });
 
   view.whenLayerView(camerasLayer).then(function (layerView) {
-    camerasLayerView = layerView;
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -902,7 +905,6 @@ require([
   });
 
   view.whenLayerView(riverSensorsLayer).then(function (layerView) {
-    riverSensorsLayerView = layerView;
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -923,44 +925,52 @@ require([
   });
 
   /**
+   * Zoom view to geometry
+   *
+   * @param {MapView} view - The map view
+   * @param {Geometry} geom - The geometry
+   * @returns {{target: Extent}|{center: [number, number], zoom: number}} The target parameter for view goTo function
+   */
+  function viewGoToTargetParam (view, geom) {
+    if (!geom) {
+      return { center: view.center, zoom: view.zoom };
+    }
+    if (geom.type === 'point') {
+      return { target: geom, zoom: view.zoom + 4 };
+    }
+    return { target: geom.extent.expand(1.1) };
+  }
+
+  /**
    * Click event handler for listNode.
    *
    * @param {MouseEvent} event
    */
-  function listNodeClickHandler(event) {
+  function listNodeClickHandler (event) {
     const target = event.target;
     const resultId = target.getAttribute('data-result-id');
     const arr = resultId.split('-');
     let result = null;
-    let center = null;
     switch (arr[0]) {
       case 'SENSOR':
         result = sensorsGraphics[parseInt(arr[1], 10)];
-        center = [result.geometry.longitude, result.geometry.latitude];
         break;
       case 'RAINGRID':
         result = raingridGraphics[parseInt(arr[1], 10)];
-        center = result.geometry.centroid;
         break;
       case 'CAMERA':
         result = camerasGraphics[parseInt(arr[1], 10)];
-        center = [result.geometry.longitude, result.geometry.latitude];
         break;
       case 'RIVERS':
         result = riverSensorsGraphics[parseInt(arr[1], 10)];
-        center = result.geometry.centroid;
         break;
     }
-    if (result && center) {
+    if (result) {
       view
-        .goTo({
-          center,
-          zoom: view.zoom + 4
-        })
+        .goTo(viewGoToTargetParam(view, result.geometry))
         .then(function () {
           view.popup.open({
-            features: [result],
-            location: center
+            features: [result]
           });
         })
         .catch(function (error) {
@@ -975,7 +985,13 @@ require([
 
   // filter
 
-  function updateAlertFilterItemActive(tag, item) {
+  /**
+   * Update active status of div filter item
+   *
+   * @param {string} tag - The attribute name
+   * @param {HTMLDivElement} item - the div element
+   */
+  function updateAlertFilterItemActive (tag, item) {
     // remove active from all items
     document.querySelectorAll(`div[${tag}]`).forEach(
       node => node.classList.remove('alert-filter-item-active')
@@ -993,7 +1009,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sensorsElementClickHandler(event) {
+  function sensorsElementClickHandler (event) {
     updateAlertFilterItemActive('data-sensor', this);
     selectedSensorLevel = event.currentTarget.getAttribute('data-sensor');
     sensorsLayerView.filter = {
@@ -1020,7 +1036,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sensorsFilterResetClickHandler(event) {
+  function sensorsFilterResetClickHandler (event) {
     updateAlertFilterItemActive('data-sensor', null);
     sensorsLayerView.filter = null;
     selectedSensorLevel = null;
@@ -1038,7 +1054,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function raingridElementClickHandler(event) {
+  function raingridElementClickHandler (event) {
     updateAlertFilterItemActive('data-raingrid', this);
     selectedRainGridLevel = event.currentTarget.getAttribute('data-raingrid');
     raingridLayerView.filter = {
@@ -1065,7 +1081,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function raingridFilterResetClickHandler(event) {
+  function raingridFilterResetClickHandler (event) {
     updateAlertFilterItemActive('data-raingrid', null);
     raingridLayerView.filter = null;
     selectedRainGridLevel = null;
@@ -1083,7 +1099,7 @@ require([
    *
    * @param {number} newValue
    */
-  function viewZoomChangeHandler(newValue) {
+  function viewZoomChangeHandler (newValue) {
     sensorsLayer.featureReduction =
       newValue > selectedclusteringUntilZoom ? null : sensorsClusterConfig;
 
@@ -1097,11 +1113,11 @@ require([
 
   /**
    * Update toggle button active property
-   * 
+   *
    * @param {FeatureLayer} layer
-   * @param {HTMLButtonElement} btn 
+   * @param {HTMLButtonElement} btn
    */
-  function updateToggleButtonActiveProp(layer, btn) {
+  function updateToggleButtonActiveProp (layer, btn) {
     if (layer.visible) {
       btn.classList.add('active');
     } else {
@@ -1111,11 +1127,11 @@ require([
 
   /**
    * Toggle layer visibility
-   * 
+   *
    * @param {FeatureLayer} layer
-   * @param {HTMLButtonElement} btn 
+   * @param {HTMLButtonElement} btn
    */
-  function toggleSourceVisibility(layer, btn) {
+  function toggleSourceVisibility (layer, btn) {
     layer.visible = !layer.visible;
     updateToggleButtonActiveProp(layer, btn);
     listNodeReset();
@@ -1126,7 +1142,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sourceElementClickHandler(event) {
+  function sourceElementClickHandler (event) {
     switch (event.currentTarget.getAttribute('data-source')) {
       case 'SENSORS':
         toggleSourceVisibility(sensorsLayer, toggleSensorsBtn);
@@ -1174,5 +1190,4 @@ require([
   document.querySelectorAll('div[data-source]').forEach(
     node => node.addEventListener('click', sourceElementClickHandler)
   );
-
 });

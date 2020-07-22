@@ -26,40 +26,16 @@ require([
   let graphics = null;
 
   /**
-   * @type {number}
-   */
-  let selectedclusteringUntilZoom = 11;
-
-  /**
-   * @type {ClusterConfig}
-   */
-  const clusterConfig = {
-    type: 'cluster',
-    popupTemplate: {
-      content: [
-        {
-          type: 'text',
-          text: 'This cluster represents <b>{cluster_count}</b> features.'
-        },
-        {
-          type: 'text',
-          text:
-            'Predominant warning level in this cluster is <b>{cluster_type_ALERT_LEVEL}</b>.'
-        }
-      ]
-    }
-  };
-
-  /**
    * Returns an anchor with the feature sensor url for PopupTemplate.
    *
    * @param {Feature} feature - Feature
    * @return {string} -The anchor element in string format
    */
-  function popupTemplateContentSensorAnchor(value) {
-    if (value)
-      return `<a class="btn btn-bordered btn-cons btn-success full-width m-b-20" `
-        + `href=${value} target="_blank"> Analytics Dashboard</a>`;
+  function popupTemplateContentSensorAnchor (value) {
+    if (value) {
+      return '<a class="btn btn-bordered btn-cons btn-success full-width m-b-20" ' +
+        `href=${value} target="_blank"> Analytics Dashboard</a>`;
+    }
     return '';
   }
 
@@ -69,7 +45,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function safeAttrValue(value) {
+  function safeAttrValue (value) {
     return value !== null && value !== undefined ? value : 'n/a';
   }
 
@@ -79,15 +55,15 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function popupTemplateContentAttrTable(attrs) {
-    return `<table class="esri-widget__table"><tbody>`
-      + `<tr><td>Alert Level</td><td>${safeAttrValue(attrs.ALERT_LEVEL)}</td></tr>`
-      + `<tr><td>Rain Measure (mm)</td><td>${safeAttrValue(attrs.MEASURE)}</td></tr>`
-      + `<tr><td>DAM Area</td><td>${safeAttrValue(attrs.DAM_AREA)}</td></tr>`
-      + `<tr><td>Town</td><td>${safeAttrValue(attrs.TOWN)}</td></tr>`
-      + `<tr><td>Time</td><td>${safeAttrValue(attrs.TIME_ID)}</td></tr>`
-      + `<tr><td>Date</td><td>${safeAttrValue(attrs.DATE_ID)}</td></tr>`
-      + `</tbody></table>`;
+  function popupTemplateContentAttrTable (attrs) {
+    return '<table class="esri-widget__table"><tbody>' +
+      `<tr><td>Alert Level</td><td>${safeAttrValue(attrs.ALERT_LEVEL)}</td></tr>` +
+      `<tr><td>Rain Measure (mm)</td><td>${safeAttrValue(attrs.MEASURE)}</td></tr>` +
+      `<tr><td>DAM Area</td><td>${safeAttrValue(attrs.DAM_AREA)}</td></tr>` +
+      `<tr><td>Town</td><td>${safeAttrValue(attrs.TOWN)}</td></tr>` +
+      `<tr><td>Time</td><td>${safeAttrValue(attrs.TIME_ID)}</td></tr>` +
+      `<tr><td>Date</td><td>${safeAttrValue(attrs.DATE_ID)}</td></tr>` +
+      '</tbody></table>';
   }
 
   /**
@@ -96,14 +72,14 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function popupTemplateContent(feature) {
+  function popupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
-    div.innerHTML = popupTemplateContentSensorAnchor(attrs.ANALYTICS_URL)
-      + popupTemplateContentAttrTable(attrs);
+    div.innerHTML = popupTemplateContentSensorAnchor(attrs.ANALYTICS_URL) +
+      popupTemplateContentAttrTable(attrs);
     return div;
   }
 
@@ -200,27 +176,30 @@ require([
 
   // widgets
 
-  view.ui.add(new Home({
-    view: view
-  }),
+  view.ui.add(
+    new Home({
+      view: view
+    }),
     'top-left'
   );
 
-  view.ui.add(new Expand({
-    expandTooltip: 'Show Legend',
-    expanded: false,
-    view: view,
-    content: new Legend({ view: view })
-  }),
+  view.ui.add(
+    new Expand({
+      expandTooltip: 'Show Legend',
+      expanded: false,
+      view: view,
+      content: new Legend({ view: view })
+    }),
     'top-left'
   );
 
-  view.ui.add(new Expand({
-    expandTooltip: 'Show Search',
-    expanded: false,
-    view: view,
-    content: new Search({ view: view })
-  }),
+  view.ui.add(
+    new Expand({
+      expandTooltip: 'Show Search',
+      expanded: false,
+      view: view,
+      content: new Search({ view: view })
+    }),
     'top-left'
   );
 
@@ -256,7 +235,7 @@ require([
    * @param {string} b - Level b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function compareLevels(a, b) {
+  function compareLevels (a, b) {
     if (!a) {
       return -1;
     }
@@ -297,7 +276,7 @@ require([
    * @param {Feature} b - Feature b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function compareFeatures(a, b) {
+  function compareFeatures (a, b) {
     return -1 * compareLevels(
       a.attributes.ALERT_LEVEL,
       b.attributes.ALERT_LEVEL
@@ -312,7 +291,7 @@ require([
    * @param {string} level - Level {'Red Alert'|'Amber Alert'|'Green Alert'|'No Alert'}
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem(id, content, level) {
+  function listNodeCreateItem (id, content, level) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
@@ -345,19 +324,19 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function listNodeItemContent(attributes) {
+  function listNodeItemContent (attributes) {
     let content = 'In-Active Grid';
     if (attributes.ALERT_LEVEL) {
       content =
-        safeAttrValue(attributes.ALERT_LEVEL)
-        + ' | '
-        + safeAttrValue(attributes.TOWN)
-        + ' | '
-        + safeAttrValue(attributes.MEASURE)
-        + ' | '
-        + safeAttrValue(attributes.POSTCODE)
-        + ' | '
-        + safeAttrValue(attributes.DAM_AREA);
+        safeAttrValue(attributes.ALERT_LEVEL) +
+        ' | ' +
+        safeAttrValue(attributes.TOWN) +
+        ' | ' +
+        safeAttrValue(attributes.MEASURE) +
+        ' | ' +
+        safeAttrValue(attributes.POSTCODE) +
+        ' | ' +
+        safeAttrValue(attributes.DAM_AREA);
     }
     return content;
   }
@@ -367,9 +346,9 @@ require([
    *
    * @param {{'Red Alert': number,'Amber Alert': number,'Green Alert': number,'No Alert': number,}} level - Alert level
    */
-  function updateLiveMapNumber(alertLevelCount) {
+  function updateLiveMapNumber (alertLevelCount) {
     document.getElementById('redAlertMapNumberSpan')
-      .innerText =alertLevelCount['Red Alert'];
+      .innerText = alertLevelCount['Red Alert'];
     document.getElementById('amberAlertMapNumberSpan')
       .innerText = alertLevelCount['Amber Alert'];
     document.getElementById('greenAlertMapNumberSpan')
@@ -381,7 +360,7 @@ require([
   /**
    * Clear and build listNode.
    */
-  function listNodeReset() {
+  function listNodeReset () {
     if (!graphics) {
       return;
     }
@@ -390,7 +369,7 @@ require([
       'Amber Alert': 0,
       'Green Alert': 0,
       'No Alert': 0
-    }
+    };
     const fragment = document.createDocumentFragment();
     graphics.sort(compareFeatures);
     graphics.forEach(function (result, index) {
@@ -399,8 +378,8 @@ require([
         !selectedSeason ||
         attributes.ALERT_LEVEL === selectedSeason
       ) {
-        if (alertLevelCount.hasOwnProperty(attributes.ALERT_LEVEL)) {
-          alertLevelCount[attributes.ALERT_LEVEL] ++;
+        if (Object.prototype.hasOwnProperty.call(alertLevelCount, attributes.ALERT_LEVEL)) {
+          alertLevelCount[attributes.ALERT_LEVEL]++;
         }
         fragment.appendChild(
           listNodeCreateItem(
@@ -442,7 +421,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function listNodeClickHandler(event) {
+  function listNodeClickHandler (event) {
     const target = event.target;
     const resultId = target.getAttribute('data-result-id');
     const result =
@@ -477,7 +456,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function seasonsElementClickHandler(event) {
+  function seasonsElementClickHandler (event) {
     selectedSeason = event.currentTarget.getAttribute('data-season');
     floodLayerView.filter = {
       where: `ALERT_LEVEL='${selectedSeason}'`
@@ -497,7 +476,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function seasonsResetClickHandler(event) {
+  function seasonsResetClickHandler (event) {
     floodLayerView.filter = null;
     selectedSeason = null;
     listNodeReset();
@@ -507,30 +486,4 @@ require([
     .addEventListener('click', seasonsResetClickHandler);
   document.getElementById('filterReset2')
     .addEventListener('click', seasonsResetClickHandler);
-
-  // cluster
-
-  /**
-   * Change event handler for clusteringUntilZoomLevel.
-   *
-   * @param {Event} event
-   */
-  function clusteringUntilZoomLevelChangeHandler(event) {
-    selectedclusteringUntilZoom = Number(event.target.value);
-    viewZoomChangeHandler(view.zoom);
-  };
-
-  /**
-   * Zoom change handler for map view.
-   *
-   * @param {number} newValue
-   */
-  function viewZoomChangeHandler(newValue) {
-    layer.featureReduction =
-      newValue > selectedclusteringUntilZoom ? null : clusterConfig;
-  }
-
-  // NOTE: Clustering only works on Point Layers
-
-  // view.watch('zoom', viewZoomChangeHandler);
 });

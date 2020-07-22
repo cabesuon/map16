@@ -11,16 +11,6 @@ require([
 
 ], function (MapView, Map, FeatureLayer, Home, Legend, Expand, Fullscreen, Search) {
   /**
-   * @type {string}
-   */
-  let selectedSeason = null;
-
-  /**
-   * @type {LayerView}
-   */
-  let floodLayerView = null;
-
-  /**
    * @type {Graphic[]}
    */
   let graphics = null;
@@ -28,7 +18,7 @@ require([
   /**
    * @type {number}
    */
-  let selectedclusteringUntilZoom = 11;
+  const selectedclusteringUntilZoom = 11;
 
   /**
    * @type {ClusterConfig}
@@ -51,10 +41,11 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The anchor element in string format
    */
-  function popupTemplateContentCameraAnchor(value) {
-    if (value)
-      return `<a class="btn btn-bordered btn-cons btn-primary camera-anchor" `
-        + `href=${value} target="_blank">View Video Stream</a>`;
+  function popupTemplateContentCameraAnchor (value) {
+    if (value) {
+      return '<a class="btn btn-bordered btn-cons btn-primary camera-anchor" ' +
+        `href=${value} target="_blank">View Video Stream</a>`;
+    }
     return '';
   }
 
@@ -64,8 +55,8 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function safeAttrValue(value) {
-    return value ? value : 'n/a';
+  function safeAttrValue (value) {
+    return value || 'n/a';
   }
 
   /**
@@ -74,12 +65,12 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function popupTemplateContentAttrTable(attrs) {
-    return `<div class="esri-widget__table"><tbody>`
-      + `<tr><td>`
-      + `<div class="camera-embed-container">${safeAttrValue(attrs.CAMERA_EMBED)}</div>`
-      + `</td></tr>`
-      + `</tbody></table>`;
+  function popupTemplateContentAttrTable (attrs) {
+    return '<div class="esri-widget__table"><tbody>' +
+      '<tr><td>' +
+      `<div class="camera-embed-container">${safeAttrValue(attrs.CAMERA_EMBED)}</div>` +
+      '</td></tr>' +
+      '</tbody></table>';
   }
 
   /**
@@ -88,15 +79,15 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function popupTemplateContent(feature) {
+  function popupTemplateContent (feature) {
     const div = document.createElement('div');
     div.className = 'popup-content';
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
-    div.innerHTML = popupTemplateContentCameraAnchor(attrs.CAMERA_URL)
-      + popupTemplateContentAttrTable(attrs);
+    div.innerHTML = popupTemplateContentCameraAnchor(attrs.CAMERA_URL) +
+      popupTemplateContentAttrTable(attrs);
     return div;
   }
 
@@ -263,7 +254,7 @@ require([
    * @param {string} content - Content text
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem(id, content) {
+  function listNodeCreateItem (id, content) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
@@ -279,19 +270,19 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function listNodeItemContent(attributes) {
-    return safeAttrValue(attributes.CAMERA_ID)
-      + ' | '
-      + safeAttrValue(attributes.THOROUGHFARE)
-      + ' | ' 
-      + safeAttrValue(attributes.TOWN)
+  function listNodeItemContent (attributes) {
+    return safeAttrValue(attributes.CAMERA_ID) +
+      ' | ' +
+      safeAttrValue(attributes.THOROUGHFARE) +
+      ' | ' +
+      safeAttrValue(attributes.TOWN)
     ;
   }
 
   /**
    * Clear and build listNode.
    */
-  function listNodeReset() {
+  function listNodeReset () {
     if (!graphics) {
       return;
     }
@@ -309,12 +300,11 @@ require([
     listNode.appendChild(fragment);
   };
 
-  function updateLiveMapNumber(value) {
+  function updateLiveMapNumber (value) {
     document.getElementById('liveMapNumberSpan').innerText = value;
   }
 
   view.whenLayerView(layer).then(function (layerView) {
-    floodLayerView = layerView;
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -340,7 +330,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function listNodeClickHandler(event) {
+  function listNodeClickHandler (event) {
     const target = event.target;
     const resultId = target.getAttribute('data-result-id');
     const result =
@@ -374,7 +364,7 @@ require([
    *
    * @param {number} newValue
    */
-  function viewZoomChangeHandler(newValue) {
+  function viewZoomChangeHandler (newValue) {
     layer.featureReduction =
       newValue > selectedclusteringUntilZoom ? null : clusterConfig;
   }

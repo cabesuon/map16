@@ -28,7 +28,7 @@ require([
   /**
    * @type {number}
    */
-  let selectedclusteringUntilZoom = 11;
+  const selectedclusteringUntilZoom = 11;
 
   /**
    * @type {ClusterConfig}
@@ -56,10 +56,11 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The anchor element in string format
    */
-  function popupTemplateContentSensorAnchor(value) {
-    if (value)
-      return `<a class="btn btn-bordered btn-cons btn-danger full-width m-b-20" `
-      + `href=${value} target="_blank">Analytics Dashboard</a>`;
+  function popupTemplateContentSensorAnchor (value) {
+    if (value) {
+      return '<a class="btn btn-bordered btn-cons btn-danger full-width m-b-20" ' +
+        `href=${value} target="_blank">Analytics Dashboard</a>`;
+    }
     return '';
   }
 
@@ -69,8 +70,8 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function safeAttrValue(value) {
-    return value ? value : 'n/a';
+  function safeAttrValue (value) {
+    return value || 'n/a';
   }
 
   /**
@@ -79,15 +80,15 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function popupTemplateContentAttrTable(attrs) {
-    return `<table class="esri-widget__table"><tbody>`
-    + `<tr><td>Warning Level</td><td>${safeAttrValue(attrs.current_level)}</td></tr>`
-    + `<tr><td>DAM Area</td><td>${safeAttrValue(attrs.dam)}</td></tr>`
-    + `<tr><td>Postcode</td><td>${safeAttrValue(attrs.postcode)}</td></tr>`
-    + `<tr><td>Road</td><td>${safeAttrValue(attrs.road)}</td></tr>`
-    + `<tr><td>Node Reference</td><td>${safeAttrValue(attrs.sd_number)}</td></tr>`
-    + `<tr><td>Alert Level</td><td>${safeAttrValue(attrs.alert_level)}</td></tr>`
-    + `</tbody></table>`;
+  function popupTemplateContentAttrTable (attrs) {
+    return '<table class="esri-widget__table"><tbody>' +
+      `<tr><td>Warning Level</td><td>${safeAttrValue(attrs.current_level)}</td></tr>` +
+      `<tr><td>DAM Area</td><td>${safeAttrValue(attrs.dam)}</td></tr>` +
+      `<tr><td>Postcode</td><td>${safeAttrValue(attrs.postcode)}</td></tr>` +
+      `<tr><td>Road</td><td>${safeAttrValue(attrs.road)}</td></tr>` +
+      `<tr><td>Node Reference</td><td>${safeAttrValue(attrs.sd_number)}</td></tr>` +
+      `<tr><td>Alert Level</td><td>${safeAttrValue(attrs.alert_level)}</td></tr>` +
+      '</tbody></table>';
   }
 
   /**
@@ -96,14 +97,14 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function popupTemplateContent(feature) {
+  function popupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
-    div.innerHTML = popupTemplateContentSensorAnchor(attrs.sensor_url)
-      + popupTemplateContentAttrTable(attrs);
+    div.innerHTML = popupTemplateContentSensorAnchor(attrs.sensor_url) +
+      popupTemplateContentAttrTable(attrs);
     return div;
   }
 
@@ -198,27 +199,30 @@ require([
 
   // widgets
 
-  view.ui.add(new Home({
-    view: view
-  }),
+  view.ui.add(
+    new Home({
+      view: view
+    }),
     'top-left'
   );
 
-  view.ui.add(new Expand({
-    expandTooltip: 'Show Legend',
-    expanded: false,
-    view: view,
-    content: new Legend({ view: view })
-  }),
+  view.ui.add(
+    new Expand({
+      expandTooltip: 'Show Legend',
+      expanded: false,
+      view: view,
+      content: new Legend({ view: view })
+    }),
     'top-left'
   );
 
-  view.ui.add(new Expand({
-    expandTooltip: 'Show Search',
-    expanded: false,
-    view: view,
-    content: new Search({ view: view })
-  }),
+  view.ui.add(
+    new Expand({
+      expandTooltip: 'Show Search',
+      expanded: false,
+      view: view,
+      content: new Search({ view: view })
+    }),
     'top-left'
   );
 
@@ -254,7 +258,7 @@ require([
    * @param {string} b - Level b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function compareLevels(a, b) {
+  function compareLevels (a, b) {
     if (a === 'Low') {
       return -1;
     }
@@ -277,7 +281,7 @@ require([
    * @param {Feature} b - Feature b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function compareFeatures(a, b) {
+  function compareFeatures (a, b) {
     return -1 * compareLevels(
       a.attributes.current_level,
       b.attributes.current_level
@@ -292,7 +296,7 @@ require([
    * @param {string} level - Level {'High'|'Medium'|'Low'}
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem(id, content, level) {
+  function listNodeCreateItem (id, content, level) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
@@ -320,30 +324,30 @@ require([
    *
    * @param {{'Very High': number,'High': number,'Medium': number,'Low': number,}} level - Alert level
    */
-  function updateLiveMapNumber(alertLevelCount) {
+  function updateLiveMapNumber (alertLevelCount) {
     document.getElementById('veryHighAlertMapNumberSpan')
-      .innerText =alertLevelCount['Very High'];
+      .innerText = alertLevelCount['Very High'];
     document.getElementById('highAlertMapNumberSpan')
-      .innerText = alertLevelCount['High'];
+      .innerText = alertLevelCount.High;
     document.getElementById('mediumAlertMapNumberSpan')
-      .innerText = alertLevelCount['Medium'];
+      .innerText = alertLevelCount.Medium;
     document.getElementById('lowAlertMapNumberSpan')
-      .innerText = alertLevelCount['Low'];
+      .innerText = alertLevelCount.Low;
   }
 
   /**
    * Clear and build listNode.
    */
-  function listNodeReset() {
+  function listNodeReset () {
     if (!graphics) {
       return;
     }
     const alertLevelCount = {
       'Very High': 0,
-      'High': 0,
-      'Medium': 0,
-      'Low': 0
-    }
+      High: 0,
+      Medium: 0,
+      Low: 0
+    };
     const fragment = document.createDocumentFragment();
     graphics.sort(compareFeatures);
     graphics.forEach(function (result, index) {
@@ -352,17 +356,17 @@ require([
         !selectedSeason ||
         attributes.current_level === selectedSeason
       ) {
-        if (alertLevelCount.hasOwnProperty(attributes.current_level)) {
-          alertLevelCount[attributes.current_level] ++;
+        if (Object.prototype.hasOwnProperty.call(alertLevelCount, attributes.current_level)) {
+          alertLevelCount[attributes.current_level]++;
         }
         fragment.appendChild(
           listNodeCreateItem(
             index,
-            attributes.current_level
-            + ' | '
-            + attributes.postcode
-            + ' | ' 
-            + attributes.road,
+            attributes.current_level +
+            ' | ' +
+            attributes.postcode +
+            ' | ' +
+            attributes.road,
             attributes.current_level
           )
         );
@@ -399,7 +403,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function listNodeClickHandler(event) {
+  function listNodeClickHandler (event) {
     const target = event.target;
     const resultId = target.getAttribute('data-result-id');
     const result =
@@ -433,7 +437,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function seasonsElementClickHandler(event) {
+  function seasonsElementClickHandler (event) {
     selectedSeason = event.currentTarget.getAttribute('data-season');
     floodLayerView.filter = {
       where: `current_level='${selectedSeason}'`
@@ -453,7 +457,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function seasonsResetClickHandler(event) {
+  function seasonsResetClickHandler (event) {
     floodLayerView.filter = null;
     selectedSeason = null;
     listNodeReset();
@@ -467,21 +471,11 @@ require([
   // cluster
 
   /**
-   * Change event handler for clusteringUntilZoomLevel.
-   *
-   * @param {Event} event
-   */
-  function clusteringUntilZoomLevelChangeHandler(event) {
-    selectedclusteringUntilZoom = Number(event.target.value);
-    viewZoomChangeHandler(view.zoom);
-  };
-
-  /**
    * Zoom change handler for map view.
    *
    * @param {number} newValue
    */
-  function viewZoomChangeHandler(newValue) {
+  function viewZoomChangeHandler (newValue) {
     layer.featureReduction =
       newValue > selectedclusteringUntilZoom ? null : clusterConfig;
   }

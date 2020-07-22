@@ -13,7 +13,7 @@ require([
   /**
    * @type {number}
    */
-  let selectedclusteringUntilZoom = 11;
+  const selectedclusteringUntilZoom = 11;
 
   /**
    * @type {ClusterConfig}
@@ -36,10 +36,11 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The anchor element in string format
    */
-  function popupTemplateContentAnchor(url, text) {
-    if (url)
-      return `<a class="btn btn-bordered btn-cons btn-success anchor" `
-        + `href=${url} target="_blank">${text}</a>`;
+  function popupTemplateContentAnchor (url, text) {
+    if (url) {
+      return '<a class="btn btn-bordered btn-cons btn-success anchor" ' +
+        `href=${url} target="_blank">${text}</a>`;
+    }
     return '';
   }
 
@@ -49,7 +50,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function safeAttrValue(value) {
+  function safeAttrValue (value) {
     return value !== null && value !== undefined ? value : 'n/a';
   }
 
@@ -59,12 +60,12 @@ require([
    * @param {Array<{label:string, value:string}>} attrs - Label and values of feature attributes
    * @return {string} -The table element in string format
    */
-  function popupTemplateContentAttrTable(attrs) {
-    let content = `<table class="esri-widget__table"><tbody>`;
+  function popupTemplateContentAttrTable (attrs) {
+    let content = '<table class="esri-widget__table"><tbody>';
     for (const attr of attrs) {
-      content += `<tr><td>${safeAttrValue(attr.label)}</td><td>${safeAttrValue(attr.value)}</td></tr>`
+      content += `<tr><td>${safeAttrValue(attr.label)}</td><td>${safeAttrValue(attr.value)}</td></tr>`;
     }
-    content += `</tbody></table>`;
+    content += '</tbody></table>';
     return content;
   }
 
@@ -74,9 +75,9 @@ require([
   const servicesUrl = 'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services';
 
   /*
-  
+
   POINT SENSORS
-  
+
   */
 
   /**
@@ -120,15 +121,15 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function sensorsPopupTemplateContent(feature) {
+  function sensorsPopupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.sensor_url, 'Analytics Dashboard')
-      + popupTemplateContentAttrTable([
+      popupTemplateContentAnchor(attrs.sensor_url, 'Analytics Dashboard') +
+      popupTemplateContentAttrTable([
         {
           value: safeAttrValue(attrs.current_level),
           label: 'Warning Level'
@@ -184,19 +185,19 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function sensorsListNodeItemContent(attributes) {
-    return safeAttrValue(attributes.current_level)
-      + ' | '
-      + safeAttrValue(attributes.postcode)
-      + ' | '
-      + safeAttrValue(attributes.road)
-      ;
+  function sensorsListNodeItemContent (attributes) {
+    return safeAttrValue(attributes.current_level) +
+      ' | ' +
+      safeAttrValue(attributes.postcode) +
+      ' | ' +
+      safeAttrValue(attributes.road)
+    ;
   }
 
   /*
-  
+
   RAIN GRID LAYER
-  
+
   */
 
   /**
@@ -220,15 +221,15 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function raingridPopupTemplateContent(feature) {
+  function raingridPopupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'Analytics Dashboard')
-      + popupTemplateContentAttrTable([
+      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'Analytics Dashboard') +
+      popupTemplateContentAttrTable([
         {
           value: safeAttrValue(attrs.ALERT_LEVEL),
           label: 'Alert Level'
@@ -263,7 +264,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The title
    */
-  function raingridPopupTemplateTitle(feature) {
+  function raingridPopupTemplateTitle (feature) {
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
     }
@@ -303,27 +304,27 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function raingridListNodeItemContent(attributes) {
+  function raingridListNodeItemContent (attributes) {
     let content = 'In-Active Grid';
     if (attributes.ALERT_LEVEL) {
       content =
-        safeAttrValue(attributes.ALERT_LEVEL)
-        + ' | '
-        + safeAttrValue(attributes.TOWN)
-        + ' | '
-        + safeAttrValue(attributes.MEASURE)
-        + ' | '
-        + safeAttrValue(attributes.POSTCODE)
-        + ' | '
-        + safeAttrValue(attributes.DAM_AREA);
+        safeAttrValue(attributes.ALERT_LEVEL) +
+        ' | ' +
+        safeAttrValue(attributes.TOWN) +
+        ' | ' +
+        safeAttrValue(attributes.MEASURE) +
+        ' | ' +
+        safeAttrValue(attributes.POSTCODE) +
+        ' | ' +
+        safeAttrValue(attributes.DAM_AREA);
     }
     return content;
   }
 
   /*
-  
+
   CAMERAS LAYER
-  
+
   */
 
   /**
@@ -332,17 +333,12 @@ require([
   let camerasGraphics = [];
 
   /**
-   * @type {LayerView}
-   */
-  let camerasLayerView = null;
-
-  /**
    * Create and return the content of a feature for PopupTemplate.
    *
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function camerasPopupTemplateContent(feature) {
+  function camerasPopupTemplateContent (feature) {
     const div = document.createElement('div');
     div.className = 'popup-embed-content';
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
@@ -351,12 +347,12 @@ require([
 
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.CAMERA_URL, 'View Video Stream')
-      + `<div class="esri-widget__table"><tbody>`
-      + `<tr><td>`
-      + `<div class="video-embed-container">${safeAttrValue(attrs.CAMERA_EMBED)}</div>`
-      + `</td></tr>`
-      + `</tbody></table>`;
+      popupTemplateContentAnchor(attrs.CAMERA_URL, 'View Video Stream') +
+      '<div class="esri-widget__table"><tbody>' +
+      '<tr><td>' +
+      `<div class="video-embed-container">${safeAttrValue(attrs.CAMERA_EMBED)}</div>` +
+      '</td></tr>' +
+      '</tbody></table>';
     return div;
   }
 
@@ -391,19 +387,19 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function camerasListNodeItemContent(attributes) {
-    return safeAttrValue(attributes.CAMERA_ID)
-      + ' | '
-      + safeAttrValue(attributes.THOROUGHFARE)
-      + ' | '
-      + safeAttrValue(attributes.TOWN)
-      ;
+  function camerasListNodeItemContent (attributes) {
+    return safeAttrValue(attributes.CAMERA_ID) +
+      ' | ' +
+      safeAttrValue(attributes.THOROUGHFARE) +
+      ' | ' +
+      safeAttrValue(attributes.TOWN)
+    ;
   }
 
   /*
-  
+
   RIVER SENSORS LAYER
-  
+
   */
 
   /**
@@ -412,17 +408,12 @@ require([
   let riverSensorsGraphics = [];
 
   /**
-   * @type {LayerView}
-   */
-  let riverSensorsLayerView = null;
-
-  /**
    * Create and return the content of a feature for PopupTemplate.
    *
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function riverSensorsPopupTemplateContent(feature) {
+  function riverSensorsPopupTemplateContent (feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
@@ -430,8 +421,8 @@ require([
 
     const attrs = feature.graphic.attributes;
     div.innerHTML =
-      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'Analytics Dashboard')
-      + popupTemplateContentAttrTable([
+      popupTemplateContentAnchor(attrs.ANALYTICS_URL, 'Analytics Dashboard') +
+      popupTemplateContentAttrTable([
         {
           value: safeAttrValue(attrs.ALERT_LEVEL),
           label: 'Alert Level'
@@ -508,14 +499,14 @@ require([
    * @param {Object} attributes - Feature attributes
    * @return {string} The content
    */
-  function riverSensorsListNodeItemContent(attributes) {
-    return safeAttrValue(attributes.ALERT_LEVEL)
-      + ' | '
-      + safeAttrValue(attributes.TOWN)
-      + ' | '
-      + safeAttrValue(attributes.POSTCODE)
-      + ' | '
-      + safeAttrValue(attributes.DAM_AREA)
+  function riverSensorsListNodeItemContent (attributes) {
+    return safeAttrValue(attributes.ALERT_LEVEL) +
+      ' | ' +
+      safeAttrValue(attributes.TOWN) +
+      ' | ' +
+      safeAttrValue(attributes.POSTCODE) +
+      ' | ' +
+      safeAttrValue(attributes.DAM_AREA)
     ;
   }
 
@@ -659,7 +650,6 @@ require([
     'top-left'
   );
 
-
   // list
 
   /**
@@ -675,7 +665,7 @@ require([
    * @param {string} bgClass - Background class for item
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem(id, content, bgClass) {
+  function listNodeCreateItem (id, content, bgClass) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
@@ -693,7 +683,7 @@ require([
    * @param {string} bgClass - Background class for item
    * @return {DocumentFragment} The fragment
    */
-  function listNodeCreateFragment(
+  function listNodeCreateFragment (
     graphics, sourceName, listNodeItemContent, bgClass, filter
   ) {
     const fragment = document.createDocumentFragment();
@@ -715,15 +705,19 @@ require([
   /**
    * Clear and build listNode.
    */
-  function listNodeReset() {
+  function listNodeReset () {
     listNode.innerHTML = '';
+
+    // sensors
+
+    let sensorsFragment = null;
     let filter = null;
+    let sensorsCount = 0;
     if (sensorsLayer.visible) {
-      sensorsGraphics;
       if (selectedSensorLevel) {
         filter = function (f) {
           return f.attributes.current_level === selectedSensorLevel;
-        }
+        };
       }
       sensorsFragment = listNodeCreateFragment(
         sensorsGraphics,
@@ -732,12 +726,17 @@ require([
         'gradient-45deg-amber-amber',
         filter
       );
-      updateLiveMapNumber(sensorsLayer, sensorsFragment.childElementCount);
+      sensorsCount = sensorsFragment.childElementCount;
       listNode.appendChild(sensorsFragment);
     }
+    updateLiveMapNumber(sensorsLayer, sensorsCount);
+
+    // raingrid
+
+    let raingridFragment = null;
     filter = null;
+    let raingridCount = 0;
     if (raingridLayer.visible) {
-      raingridGraphics;
       if (selectedRainGridLevel) {
         filter = function (f) {
           return f.attributes.ALERT_LEVEL === selectedRainGridLevel;
@@ -754,10 +753,16 @@ require([
         'gradient-45deg-light-blue-cyan',
         filter
       );
-      updateLiveMapNumber(raingridLayer, raingridFragment.childElementCount);
+      raingridCount = raingridFragment.childElementCount;
       listNode.appendChild(raingridFragment);
     }
+    updateLiveMapNumber(raingridLayer, raingridCount);
+
+    // cameras
+
+    let camerasFragment = null;
     filter = null;
+    let camerasCount = 0;
     if (camerasLayer.visible) {
       camerasFragment = listNodeCreateFragment(
         camerasGraphics,
@@ -766,10 +771,16 @@ require([
         'gradient-45deg-red-red',
         filter
       );
-      updateLiveMapNumber(camerasLayer, camerasFragment.childElementCount);
+      camerasCount = camerasFragment.childElementCount;
       listNode.appendChild(camerasFragment);
     }
+    updateLiveMapNumber(camerasLayer, camerasCount);
+
+    // river sensors
+
+    let riverSensorsFragment = null;
     filter = null;
+    let riverSensorsCount = 0;
     if (riverSensorsLayer.visible) {
       riverSensorsFragment = listNodeCreateFragment(
         riverSensorsGraphics,
@@ -778,9 +789,10 @@ require([
         'gradient-45deg-indigo-purple',
         filter
       );
-      updateLiveMapNumber(riverSensorsLayer, riverSensorsFragment.childElementCount);
+      riverSensorsCount = riverSensorsFragment.childElementCount;
       listNode.appendChild(riverSensorsFragment);
     }
+    updateLiveMapNumber(riverSensorsLayer, riverSensorsCount);
   };
 
   /**
@@ -789,21 +801,21 @@ require([
    * @param {FeatureLayer} layer - The layer
    * @param {number} value - The features number
    */
-  function updateLiveMapNumber(layer, value) {
+  function updateLiveMapNumber (layer, value) {
     let id = '';
-    switch(layer) {
+    switch (layer) {
       case sensorsLayer:
         id = 'sensorsMapNumberSpan';
-      break;
+        break;
       case raingridLayer:
         id = 'raingridMapNumberSpan';
-      break;
+        break;
       case camerasLayer:
         id = 'camerasMapNumberSpan';
-      break;
+        break;
       case riverSensorsLayer:
         id = 'riverSensorsMapNumberSpan';
-      break;
+        break;
     }
     document.getElementById(id).innerText = value;
   }
@@ -851,7 +863,6 @@ require([
   });
 
   view.whenLayerView(camerasLayer).then(function (layerView) {
-    camerasLayerView = layerView;
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -872,7 +883,6 @@ require([
   });
 
   view.whenLayerView(riverSensorsLayer).then(function (layerView) {
-    riverSensorsLayerView = layerView;
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -897,7 +907,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function listNodeClickHandler(event) {
+  function listNodeClickHandler (event) {
     const target = event.target;
     const resultId = target.getAttribute('data-result-id');
     const arr = resultId.split('-');
@@ -945,7 +955,7 @@ require([
 
   // sensors filter
 
-  function updateAlertFilterButtonActive(tag, btn) {
+  function updateAlertFilterButtonActive (tag, btn) {
     // remove active from all items
     document.querySelectorAll(`button[${tag}]`).forEach(
       node => node.classList.remove('active')
@@ -961,7 +971,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sensorsElementClickHandler(event) {
+  function sensorsElementClickHandler (event) {
     updateAlertFilterButtonActive('data-sensor', this);
     selectedSensorLevel = event.currentTarget.getAttribute('data-sensor');
     sensorsLayerView.filter = {
@@ -988,7 +998,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sensorsFilterResetClickHandler(event) {
+  function sensorsFilterResetClickHandler (event) {
     updateAlertFilterButtonActive('data-sensor', null);
     sensorsLayerView.filter = null;
     selectedSensorLevel = null;
@@ -1001,7 +1011,7 @@ require([
 
   // raingrid filter
 
-  function updateAlertFilterItemActive(tag, item) {
+  function updateAlertFilterItemActive (tag, item) {
     // remove active from all items
     document.querySelectorAll(`div[${tag}]`).forEach(
       node => node.classList.remove('alert-filter-item-active')
@@ -1017,7 +1027,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function raingridElementClickHandler(event) {
+  function raingridElementClickHandler (event) {
     updateAlertFilterItemActive('data-raingrid', this);
     selectedRainGridLevel = event.currentTarget.getAttribute('data-raingrid');
     raingridLayerView.filter = {
@@ -1044,7 +1054,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function raingridFilterResetClickHandler(event) {
+  function raingridFilterResetClickHandler (event) {
     updateAlertFilterItemActive('data-raingrid', null);
     raingridLayerView.filter = null;
     selectedRainGridLevel = null;
@@ -1062,7 +1072,7 @@ require([
    *
    * @param {number} newValue
    */
-  function viewZoomChangeHandler(newValue) {
+  function viewZoomChangeHandler (newValue) {
     sensorsLayer.featureReduction =
       newValue > selectedclusteringUntilZoom ? null : sensorsClusterConfig;
 
@@ -1076,11 +1086,11 @@ require([
 
   /**
    * Update toggle button active property
-   * 
+   *
    * @param {FeatureLayer} layer
-   * @param {HTMLButtonElement} btn 
+   * @param {HTMLButtonElement} btn
    */
-  function updateToggleButtonActiveProp(layer, btn) {
+  function updateToggleButtonActiveProp (layer, btn) {
     if (layer.visible) {
       btn.classList.add('active');
     } else {
@@ -1090,11 +1100,11 @@ require([
 
   /**
    * Toggle layer visibility
-   * 
+   *
    * @param {FeatureLayer} layer
-   * @param {HTMLButtonElement} btn 
+   * @param {HTMLButtonElement} btn
    */
-  function toggleSourceVisibility(layer, btn) {
+  function toggleSourceVisibility (layer, btn) {
     layer.visible = !layer.visible;
     updateToggleButtonActiveProp(layer, btn);
     listNodeReset();
@@ -1105,7 +1115,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sourceElementClickHandler(event) {
+  function sourceElementClickHandler (event) {
     switch (event.currentTarget.getAttribute('data-source')) {
       case 'SENSORS':
         toggleSourceVisibility(sensorsLayer, toggleSensorsBtn);
@@ -1153,5 +1163,4 @@ require([
   document.querySelectorAll('div[data-source]').forEach(
     node => node.addEventListener('click', sourceElementClickHandler)
   );
-
 });
