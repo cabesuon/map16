@@ -1,3 +1,7 @@
+var apiKey = 'PukIIGPERibDqcEgy4KWqaFMhfD4eeB0';
+
+var serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy';
+
 require([
   'esri/views/MapView',
   'esri/Map',
@@ -8,7 +12,9 @@ require([
   'esri/widgets/Fullscreen',
   'esri/widgets/Search',
   'esri/widgets/Measurement',
-  'esri/widgets/TimeSlider'
+  'esri/widgets/TimeSlider',
+  'esri/layers/WebTileLayer',
+  'esri/popup/content/AttachmentsContent'
 ], function (
   MapView,
   Map,
@@ -19,8 +25,30 @@ require([
   Fullscreen,
   Search,
   Measurement,
-  TimeSlider
+  TimeSlider,
+  WebTileLayer,
+   AttachmentsContent
 ) {
+  /**
+   * @type {Date}
+   */
+  let selectedFilterDateStart = null;
+  
+  /**
+   * @type {Date}
+   */
+  let selectedFilterDateEnd = null;
+
+  /**
+   * @type {LayerView}
+   */
+  let sensorsLayerView = null;
+
+  /**
+   * @type {LayerView}
+   */
+  let gatewaysLayerView = null;
+
   /**
    * @type {Graphic[]}
    */
@@ -39,7 +67,7 @@ require([
   /**
    * @type {number}
    */
-  const selectedclusteringUntilZoom = 11;
+  let selectedclusteringUntilZoom = 11;
 
   /**
    * @type {ClusterConfig}
@@ -50,12 +78,7 @@ require([
       content: [
         {
           type: 'text',
-          text: 'This cluster represents <b>{cluster_count}</b> features.'
-        },
-        {
-          type: 'text',
-          text:
-            'Predominant sensor type in this cluster is <b>{cluster_type_sensor_type_label}</b>.'
+          text: 'This cluster represents <b>{cluster_count}</b> sensors.'
         }
       ]
     }
@@ -70,7 +93,7 @@ require([
       content: [
         {
           type: 'text',
-          text: 'This cluster represents <b>{cluster_count}</b> features.'
+          text: 'This cluster represents <b>{cluster_count}</b> gateways.'
         }
       ]
     }
@@ -82,11 +105,12 @@ require([
    * @param {Date} date - The date
    * @return {string} -The string format
    */
-  function dateToString (date) {
-    const m = date.getMonth() + 1 < 10
-      ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
-    const d = date.getDate() < 10
-      ? `0${date.getDate()}` : `${date.getDate()}`;
+  function dateToString(date) {
+    const m = date.getMonth() + 1 < 10 ?
+    `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+    const d = date.getDate() < 10 ?
+    `0${date.getDate()}` : `${date.getDate()}`;
+    
     return `${m}/${d}/${date.getFullYear()}`;
   }
 
@@ -96,7 +120,7 @@ require([
    * @param {Date} date - The date
    * @return {string} -The string format
    */
-  function dateCompare (d1, d2) {
+  function dateCompare(d1, d2) {
     // year
     if (d1.getFullYear() < d2.getFullYear()) {
       return -1;
@@ -127,8 +151,8 @@ require([
    * @param {Feature} feature - Feature
    * @return {string} -The table element in string format
    */
-  function safeAttrValue (value) {
-    return value || 'n/a';
+  function safeAttrValue(value) {
+    return value ? value : 'n/a';
   }
 
   /**
@@ -137,12 +161,12 @@ require([
    * @param {Array<{label:string, value:string}>} attrs - Label and values of feature attributes
    * @return {string} -The table element in string format
    */
-  function popupTemplateContentAttrTable (attrs) {
-    let content = '<table class="esri-widget__table"><tbody>';
-    for (const attr of attrs) {
-      content += `<tr><td>${safeAttrValue(attr.label)}</td><td>${safeAttrValue(attr.value)}</td></tr>`;
+  function popupTemplateContentAttrTable(attrs) {
+    let content = `<table class="esri-widget__table"><tbody>`;
+    for(const attr of attrs) {
+      content += `<tr><td>${safeAttrValue(attr.label)}</td><td>${safeAttrValue(attr.value)}</td></tr>`
     }
-    content += '</tbody></table>';
+    content += `</tbody></table>`;
     return content;
   }
 
@@ -152,7 +176,7 @@ require([
    * @param {Feature} feature - Feature
    * @return {HTMLDivElement} -The div element
    */
-  function popupTemplateContent (feature) {
+  function popupTemplateContent(feature) {
     const div = document.createElement('div');
     if (!feature || !feature.graphic || !feature.graphic.attributes) {
       return;
@@ -160,61 +184,63 @@ require([
     let attrs = [];
     if (feature.graphic.layer === sensorsLayer) {
       attrs = [
+          {
+          value: feature.graphic.attributes.sensor_id,
+          label: 'Sensor ID'
+        },
         {
-          value: feature.graphic.attributes.sensor_type_label,
+          value: feature.graphic.attributes.sensor_type,
           label: 'Type'
         },
         {
           value: feature.graphic.attributes.NODEREFERE,
           label: 'Node Ref'
         },
-        {
-          value: feature.graphic.attributes.POSTCODE,
-          label: 'Postcode'
-        },
-        {
-          value: feature.graphic.attributes.THOROUGHFARE,
-          label: 'Road'
-        },
-        {
-          value: feature.graphic.attributes.TOWN,
-          label: 'Town'
-        },
-        {
-          value: feature.graphic.attributes.DAM_AREA,
-          label: 'DAM Area'
+            {
+          value: feature.graphic.attributes.install_name,
+          label: 'Installed By'
         },
         {
           value: dateToString(
             normDate(feature.graphic.attributes.CreationDate)
           ),
-          label: 'Creation Date'
+          label: 'Date Instlled'
         }
       ];
     } else if (feature.graphic.layer === gatewaysLayer) {
       attrs = [
+        
         {
-          value: feature.graphic.attributes.survey_id,
-          label: 'Survey ID'
+          value: feature.graphic.attributes.gateway_id,
+          label: 'Gateway ID'
+        },
+           {
+          value: feature.graphic.attributes.asset_location,
+          label: 'Gateway Location'
         },
         {
-          value: feature.graphic.attributes.uu_building,
-          label: 'UU Building Available?'
+          value: feature.graphic.asset_location_other,
+          label: 'Other Gateway Location'
         },
         {
-          value: feature.graphic.attributes.power_source,
-          label: 'Power Source Available?'
+          value: feature.graphic.attributes.gateway_installed,
+          label: 'Gateway Installed'
         },
-        {
-          value: feature.graphic.attributes.socket_type,
-          label: 'Socket Type'
+          {
+          value: feature.graphic.attributes.rain_sensor_installed,
+          label: 'Rain Sensor Installed'
+        },
+           {
+          value: feature.graphic.attributes.install_name,
+          label: 'Installed By'
         },
         {
           value: dateToString(
             normDate(feature.graphic.attributes.CreationDate)
           ),
-          label: 'Creation Date'
+          label: 'Date Installed'
         }
+          
       ];
     }
     div.innerHTML = popupTemplateContentAttrTable(attrs);
@@ -225,12 +251,14 @@ require([
    * @type {PopupTemplate}
    */
   const sensorsPopupTemplate = {
-    title: '{sensor_type_label} - {POSTCODE}',
+    title: '{sensor_id} - {sensor_type} - {POSTCODE}',
     lastEditInfoEnabled: false,
     content: popupTemplateContent,
     outFields: [
-      'sensor_type_label',
+        'sensor_id',
+      'sensor_type',
       'NODEREFERE',
+        'install_name',
       'POSTCODE',
       'THOROUGHFARE',
       'TOWN',
@@ -238,18 +266,41 @@ require([
       'CreationDate'
     ]
   };
+    
+  
+    const tileLayer = new WebTileLayer({
+      urlTemplate: serviceUrl + '/Light_3857/{level}/{col}/{row}.png?key=' + apiKey
+            });    
+    
+  /**
+   * @type {FeatureLayer}
+   */
+  const Nodelayer = new FeatureLayer({
+    url:
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_manholes_wgs_master_JS_view/FeatureServer/0'
+  }); 
+    
+  /**
+   * @type {FeatureLayer}
+   */
+  const Sewerlayer = new FeatureLayer({
+    url:
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/saph_uu_gravity_sewers_all_master_wgs_JS_view/FeatureServer/0'
+  });      
 
   /**
    * @type {FeatureLayer}
    */
   const sensorsLayer = new FeatureLayer({
     url:
-      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_pre_install_wgs_master/FeatureServer/0',
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_install_view_v2/FeatureServer/0',
     featureReduction: sensorsClusterConfig,
     popupTemplate: sensorsPopupTemplate,
     outFields: [
-      'sensor_type_label',
+       'sensor_id',
+      'sensor_type',
       'NODEREFERE',
+        'install_name',
       'POSTCODE',
       'THOROUGHFARE',
       'TOWN',
@@ -258,37 +309,40 @@ require([
     ]
   });
 
+    
   /**
    * @type {PopupTemplate}
    */
   const gatewaysPopupTemplate = {
-    title: '{ObjectId}',
+    title: '{gateway_id} - {asset_location}',
     lastEditInfoEnabled: false,
-    content: popupTemplateContent,
+    content: [popupTemplateContent],
     outFields: [
-      'ObjectId',
-      'survey_id',
-      'uu_building',
-      'power_source',
-      'socket_type',
+      'gateway_id',
+      'asset_location',
+      'asset_location_other',
+        'gateway_installed',
+      'rain_sensor_installed',
+      'install_name',
       'CreationDate'
     ]
   };
-
+  
   /**
    * @type {FeatureLayer}
    */
   const gatewaysLayer = new FeatureLayer({
     url:
-      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_gateway_pre_install_surveys_view/FeatureServer/0',
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_gateway_install_view/FeatureServer/0',
     featureReduction: gatewaysClusterConfig,
     popupTemplate: gatewaysPopupTemplate,
     outFields: [
-      'ObjectId',
-      'survey_id',
-      'uu_building',
-      'power_source',
-      'socket_type',
+     'gateway_id',
+      'asset_location',
+      'asset_location_other',
+        'gateway_installed',
+      'rain_sensor_installed',
+      'install_name',
       'CreationDate'
     ]
   });
@@ -308,13 +362,14 @@ require([
     url:
       'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sap_uu_all_idas_areas_wgs_master_view/FeatureServer/0'
   });
+    
+     
 
   /**
    * @type {Map}
    */
   const map = new Map({
-    basemap: 'gray-vector',
-    layers: [DAMlayer, IDASlayer, sensorsLayer, gatewaysLayer]
+    layers: [tileLayer, Nodelayer, Sewerlayer, DAMlayer, IDASlayer, sensorsLayer, gatewaysLayer]
   });
 
   /**
@@ -323,8 +378,13 @@ require([
   const view = new MapView({
     map: map,
     container: 'viewDiv',
-    center: [-2.66042, 54.001848],
-    zoom: 6.5,
+    center: [-3.333679, 53.982117],
+    zoom: 7,
+    constraints: {
+            minZoom: 6,
+            maxZoom: 22,
+            rotationEnabled: false
+                },      
     popup: {
       dockEnabled: true,
       dockOptions: {
@@ -356,11 +416,11 @@ require([
    * @param {string} fieldName - The name of the date field
    * @return {Promise} - A promise for one feature with date attributes 'min' and 'max'
    */
-  function featureLayerFullTimeExtent (layer, fieldName) {
+  function featureLayerFullTimeExtent(layer, fieldName) {
     const query = layer.createQuery();
     query.outStatistics = [
       {
-        statisticType: 'MIN',
+        statisticType:'MIN',
         onStatisticField: fieldName,
         outStatisticFieldName: 'min'
       },
@@ -379,7 +439,7 @@ require([
    * @param {Date} start - The start of the extent
    * @param {Date} end - The end of the extent
    */
-  function timeSliderFullTimeExtentExtend (start, end) {
+  function timeSliderFullTimeExtentExtend(start, end) {
     if (!timeSlider.fullTimeExtent) {
       timeSlider.fullTimeExtent = { start, end };
     } else {
@@ -390,68 +450,71 @@ require([
         timeSlider.fullTimeExtent.end = end;
       }
     }
+    // timeSlider.stops = {
+    //   interval: {
+    //     value: 1,
+    //     unit: 'days'
+    //   },
+    //   timeExtent: {
+    //     start: timeSlider.fullTimeExtent.start,
+    //     end: timeSlider.fullTimeExtent.end
+    //   }
+    // };
     timeSlider.values = [
       timeSlider.fullTimeExtent.start,
       timeSlider.fullTimeExtent.end
     ];
-    timeSlider.stops = {
-      interval: {
-        value: 1,
-        unit: 'days'
-      }
-    };
   }
 
   /**
    * Helper function to norm date
    */
-  function normDate (d) {
+  function normDate(d) {
     return new Date(d);
   }
 
   /**
    * Helper function for time slider time extent and values initialization
    */
-  function timeSliderTimeExtentInit () {
+  function timeSliderTimeExtentInit() {
     featureLayerFullTimeExtent(sensorsLayer, 'CreationDate')
-      .then(function (response) {
-        if (!response.features) {
-          return;
-        }
-        timeSliderFullTimeExtentExtend(
-          normDate(response.features[0].attributes.min),
-          normDate(response.features[0].attributes.max)
-        );
-      });
+    .then(function(response) {
+      if (!response.features) {
+        return;
+      }
+      timeSliderFullTimeExtentExtend(
+        normDate(response.features[0].attributes.min),
+        normDate(response.features[0].attributes.max)
+      )
+    });
     featureLayerFullTimeExtent(gatewaysLayer, 'CreationDate')
-      .then(function (response) {
-        if (!response.features) {
-          return;
-        }
-        timeSliderFullTimeExtentExtend(
-          normDate(response.features[0].attributes.min),
-          normDate(response.features[0].attributes.max)
-        );
-      });
+    .then(function(response) {
+      if (!response.features) {
+        return;
+      }
+      timeSliderFullTimeExtentExtend(
+        normDate(response.features[0].attributes.min),
+        normDate(response.features[0].attributes.max)
+      )
+    });
   }
   timeSliderTimeExtentInit();
 
   // ui
 
-  view.ui.add(
-    new Home({
-      view: view
-    }),
+  view.ui.add(new Home({
+    view: view
+  }),
     'top-left'
   );
 
-  view.ui.add(
-    new Expand({
-      expandTooltip: 'Show Legend',
-      expanded: false,
-      view: view,
-      content: new Legend({ view: view })
-    }),
+  view.ui.add(new Expand({
+    expandTooltip: 'Show Legend',
+    expanded: false,
+      autoCollapse: true,
+    view: view,
+    content: new Legend({ view: view })
+  }),
     'top-left'
   );
 
@@ -459,6 +522,7 @@ require([
     new Expand({
       expandTooltip: 'Show Search',
       expanded: false,
+        autoCollapse: true,
       view: view,
       content: new Search({
         view: view,
@@ -477,9 +541,9 @@ require([
             minSuggestCharacters: 0
           }
         ],
-        includeDefaultSources: false,
+        includeDefaultSources: true,
         locationEnabled: false,
-        searchAllEnabled: false
+        searchAllEnabled: true
       })
     }),
     'top-left'
@@ -499,7 +563,8 @@ require([
       view: view,
       content: document.getElementById('measureDiv'),
       expandIconClass: 'esri-icon-measure',
-      expanded: false
+      expanded: false,
+        autoCollapse: true
     }),
     'top-left'
   );
@@ -515,11 +580,12 @@ require([
       expandTooltip: 'Show TimeSlider',
       content: timeSlider.domNode,
       expandIconClass: 'esri-icon-filter',
-      expanded: false
+      expanded: false,
+        autoCollapse: true
     }),
     'top-left'
   );
-
+  
   // list
 
   /**
@@ -534,7 +600,7 @@ require([
    * @param {string} b - Level b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function compareLevels (a, b) {
+  function compareLevels(a, b) {
     if (!a) {
       return -1;
     }
@@ -564,10 +630,10 @@ require([
    * @param {Feature} b - Feature b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function sensorsCompareFeatures (a, b) {
+  function sensorsCompareFeatures(a, b) {
     return -1 * compareLevels(
-      a.attributes.sensor_type_label,
-      b.attributes.sensor_type_label
+      a.attributes.sensor_type,
+      b.attributes.sensor_type
     );
   }
 
@@ -579,14 +645,14 @@ require([
    * @param {string} level - Level {'High'|'Medium'|'Low'}
    * @return {HTMLLIElement} The <li> element
    */
-  function listNodeCreateItem (id, content, layer) {
+  function listNodeCreateItem(id, content, layer) {
     const li = document.createElement('li');
     li.classList.add('panel-result');
     li.tabIndex = 0;
     li.setAttribute('data-result-id', id);
     li.textContent = content;
     if (layer === sensorsLayer) {
-      li.classList.add('gradient-45deg-purple-deep-purple');
+      li.classList.add('gradient-45deg-amber-amber');
     } else if (layer === gatewaysLayer) {
       li.classList.add('gradient-45deg-indigo-light-blue');
     } else {
@@ -601,86 +667,68 @@ require([
    * @param {Graphic} feature - The feature
    * @return {string} The content
    */
-  function listNodeCreateItemContent (feature) {
+  function listNodeCreateItemContent(feature) {
     if (feature.layer === sensorsLayer) {
-      return safeAttrValue(feature.attributes.sensor_type_label) +
-        ' | ' +
-        safeAttrValue(feature.attributes.POSTCODE) +
-        ' | ' +
-        safeAttrValue(feature.attributes.THOROUGHFARE) +
-        ' | ' +
-        safeAttrValue(dateToString(normDate(feature.attributes.CreationDate)));
+      return safeAttrValue(feature.attributes.sensor_type)
+        + ' | '
+        + safeAttrValue(feature.attributes.POSTCODE)
+        + ' | ' 
+        + safeAttrValue(feature.attributes.THOROUGHFARE)
+        + ' | ' 
+        + safeAttrValue(dateToString(normDate(feature.attributes.CreationDate)));
     } else if (feature.layer === gatewaysLayer) {
-      return safeAttrValue(feature.attributes.survey_id) +
-        ' | ' +
-        safeAttrValue(feature.attributes.power_source) +
-        ' | ' +
-        safeAttrValue(feature.attributes.socket_type) +
-        ' | ' +
-        safeAttrValue(dateToString(normDate(feature.attributes.CreationDate)));
+      return safeAttrValue(feature.attributes.gateway_id)
+        + ' | '
+        + safeAttrValue(feature.asset_location);
     }
     return 'no layer';
   };
 
   /**
-   * Update UI with the number of features of layer in current map view.
-   *
-   * @param {FeatureLayer} layer - The layer
-   * @param {number} value - The features number
-   */
-  function updateLiveMapNumber (layer, value) {
-    let id = '';
-    switch (layer) {
-      case sensorsLayer:
-        id = 'sensorsMapNumberSpan';
-        break;
-      case gatewaysLayer:
-        id = 'gatewaysMapNumberSpan';
-        break;
-    }
-    document.getElementById(id).innerText = value;
-  }
-
-  /**
    * Clear and build listNode.
    */
-  function listNodeReset () {
+  function listNodeReset() {
     graphics = [];
-    let count = 0;
     if (sensorsLayer.visible && sensorsGraphics) {
       sensorsGraphics.sort(sensorsCompareFeatures);
       graphics = graphics.concat(sensorsGraphics);
-      count = sensorsGraphics.length;
     }
-    updateLiveMapNumber(sensorsLayer, count);
-    count = 0;
     if (gatewaysLayer.visible && gatewaysGraphics) {
       graphics = graphics.concat(gatewaysGraphics);
-      count = gatewaysGraphics.length;
     }
-    updateLiveMapNumber(gatewaysLayer, count);
+
     const fragment = document.createDocumentFragment();
     graphics.forEach(function (feature, index) {
-      fragment.appendChild(
-        listNodeCreateItem(
-          index,
-          listNodeCreateItemContent(feature),
-          feature.layer
-        )
-      );
+      // const creationDate = normDate(feature.attributes.CreationDate);
+      // if (dateCompare(timeSlider.timeExtent.start, creationDate) < 1
+      //   &&
+      //   dateCompare(timeSlider.timeExtent.end, creationDate) > -1
+      // ) {
+        fragment.appendChild(
+          listNodeCreateItem(
+            index,
+            listNodeCreateItemContent(feature),
+            feature.layer
+          )
+        );
+      // } else {
+      //   console.log(`${dateCompare(timeSlider.timeExtent.end, creationDate)} ${timeSlider.timeExtent.end} ${creationDate}`);
+      // }
     });
     listNode.innerHTML = '';
     listNode.appendChild(fragment);
   };
 
   view.whenLayerView(sensorsLayer).then(function (layerView) {
+    sensorsLayerView = layerView;
+
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
           .queryFeatures({
             geometry: view.extent,
             returnGeometry: true,
-            orderByFields: ['sensor_type_label']
+            orderByFields: ['CreationDate']
           })
           .then(function (results) {
             sensorsGraphics = results.features;
@@ -694,6 +742,8 @@ require([
   });
 
   view.whenLayerView(gatewaysLayer).then(function (layerView) {
+    gatewaysLayerView = layerView;
+
     layerView.watch('updating', function (value) {
       if (!value) {
         layerView
@@ -717,7 +767,7 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function listNodeClickHandler (event) {
+  function listNodeClickHandler(event) {
     const target = event.target;
     const resultId = target.getAttribute('data-result-id');
     const result =
@@ -735,7 +785,7 @@ require([
           });
         })
         .catch(function (error) {
-          if (error.sensor_type_label !== 'AbortError') {
+          if (error.sensor_type !== 'AbortError') {
             console.error(error);
           }
         });
@@ -767,7 +817,7 @@ require([
   /**
    * Toggle sensors layer visibility
    */
-  function toggleSensorsVisibility () {
+  function toggleSensorsVisibility() {
     sensorsLayer.visible = !sensorsLayer.visible;
     if (sensorsLayer.visible) {
       toggleSensorsBtn.classList.add('active');
@@ -780,7 +830,7 @@ require([
   /**
    * Toggle gateways layer visibility
    */
-  function toggleGatewaysVisibility () {
+  function toggleGatewaysVisibility() {
     gatewaysLayer.visible = !gatewaysLayer.visible;
     if (gatewaysLayer.visible) {
       toggleGatewaysBtn.classList.add('active');
@@ -798,8 +848,8 @@ require([
    *
    * @param {MouseEvent} event
    */
-  function sourcesElementClickHandler (event) {
-    const selectedSource = event.currentTarget.getAttribute('data-source');
+  function sourcesElementClickHandler(event) {
+    selectedSource = event.currentTarget.getAttribute('data-source');
     if (selectedSource === 'Sensors') {
       toggleSensorsVisibility();
     } else if (selectedSource === 'Gateways') {
@@ -815,14 +865,14 @@ require([
 
   // filter
 
-  function extractBetween (efield, esource, a, b) {
+  function extractBetween(efield, esource, a, b) {
     return `EXTRACT(${efield} FROM ${esource}) BETWEEN ${a} AND ${b}`;
   }
 
   /**
    * Update the filter of the layers.
    */
-  function layerViewFilterUpdate () {
+  function layerViewFilterUpdate() {
     const filter = {
       where:
       extractBetween(
@@ -830,16 +880,16 @@ require([
         'CreationDate',
         timeSlider.timeExtent.start.getFullYear(),
         timeSlider.timeExtent.end.getFullYear()
-      ) +
-      ' AND ' +
-      extractBetween(
+      )
+      + ' AND '
+      + extractBetween(
         'MONTH',
         'CreationDate',
         timeSlider.timeExtent.start.getMonth() + 1,
         timeSlider.timeExtent.end.getMonth() + 1
-      ) +
-      ' AND ' +
-      extractBetween(
+      )
+      + ' AND '
+      + extractBetween(
         'DAY',
         'CreationDate',
         timeSlider.timeExtent.start.getDate(),
@@ -854,15 +904,15 @@ require([
     }
     listNodeReset();
   }
-
-  timeSlider.watch('timeExtent', layerViewFilterUpdate);
+  
+  timeSlider.watch("timeExtent", layerViewFilterUpdate);
 
   /**
    * Zoom change handler for map view.
    *
    * @param {number} newValue
    */
-  function viewZoomChangeHandler (newValue) {
+  function viewZoomChangeHandler(newValue) {
     sensorsLayer.featureReduction =
       newValue > selectedclusteringUntilZoom ? null : sensorsClusterConfig;
     gatewaysLayer.featureReduction =
@@ -877,12 +927,12 @@ require([
    * @type {HTMLButtonElement}
    */
   const measureDistanceBtn = document.getElementById('measureDistanceBtn');
-
+  
   /**
    * @type {HTMLButtonElement}
    */
   const measureAreaBtn = document.getElementById('measureAreaBtn');
-
+  
   /**
    * @type {HTMLButtonElement}
    */
@@ -891,7 +941,7 @@ require([
   /**
    * Activate distance measurement
    */
-  function distanceMeasurement () {
+  function distanceMeasurement() {
     measurement.activeTool = 'distance';
     measureDistanceBtn.classList.add('active');
     measureAreaBtn.classList.remove('active');
@@ -900,7 +950,7 @@ require([
   /**
    * Activate area measurement
    */
-  function areaMeasurement () {
+  function areaMeasurement() {
     measurement.activeTool = 'area';
     measureDistanceBtn.classList.remove('active');
     measureAreaBtn.classList.add('active');
@@ -909,19 +959,20 @@ require([
   /**
    * Clear measurements
    */
-  function clearMeasurements () {
+  function clearMeasurements() {
     measureDistanceBtn.classList.remove('active');
     measureAreaBtn.classList.remove('active');
     measurement.clear();
   }
 
-  measureDistanceBtn.addEventListener('click', function () {
+  measureDistanceBtn.addEventListener('click', function() {
     distanceMeasurement();
   });
-  measureAreaBtn.addEventListener('click', function () {
-    areaMeasurement();
+  measureAreaBtn.addEventListener('click', function() {
+  areaMeasurement();
   });
-  measureClearBtn.addEventListener('click', function () {
+  measureClearBtn.addEventListener('click', function() {
     clearMeasurements();
   });
+
 });

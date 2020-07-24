@@ -1,4 +1,4 @@
-# Freelance works for **map16**s
+# Freelance works for **map16**
 
 <table>
   <thead>
@@ -508,6 +508,36 @@
           <li>In process</li>
           <li>0:40</li>
         </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>07/21/2020</td>
+      <td>
+        <a href="./072120/inputs/testing_zoom_to_location_with_url_parameter.html" target="_blank">Zoom To Location - Query FeatureLayer met URL Parameters</a>
+      </td>
+      <td>
+        I have also attached a html file with that we would like you have a look at. It basically uses ?id=lr-us00021 in the url to zoom and filter to that specific sensor location.
+      </td>
+      <td>
+        <a href="./071920/testing_zoom_to_location_with_url_parameter.html" target="_blank">Zoom to location with URL Parameters</a>
+      </td>
+      <td>
+        1:00
+      </td>
+    </tr>
+    <tr>
+      <td>07/22/2020</td>
+      <td>
+        <a href="./072220/inputs/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        Would it be possible to look at the install dashboard I have added below. This is exactly the same as the works done on 070320, just with slightly different layers.
+      </td>
+      <td>
+        <a href="./072220/index.html" target="_blank">map16 - Data Dashboard</a>
+      </td>
+      <td>
+        1:00
       </td>
     </tr>
   </tbody>

@@ -1,3 +1,7 @@
+var apiKey = 'PukIIGPERibDqcEgy4KWqaFMhfD4eeB0';
+
+var serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy';
+
 require([
   'esri/views/MapView',
   'esri/Map',
@@ -8,7 +12,9 @@ require([
   'esri/widgets/Fullscreen',
   'esri/widgets/Search',
   'esri/widgets/Measurement',
-  'esri/widgets/TimeSlider'
+  'esri/widgets/TimeSlider',
+  'esri/layers/WebTileLayer',
+  'esri/popup/content/AttachmentsContent'
 ], function (
   MapView,
   Map,
@@ -19,7 +25,8 @@ require([
   Fullscreen,
   Search,
   Measurement,
-  TimeSlider
+  TimeSlider,
+  WebTileLayer
 ) {
   /**
    * @type {Graphic[]}
@@ -50,12 +57,7 @@ require([
       content: [
         {
           type: 'text',
-          text: 'This cluster represents <b>{cluster_count}</b> features.'
-        },
-        {
-          type: 'text',
-          text:
-            'Predominant sensor type in this cluster is <b>{cluster_type_sensor_type_label}</b>.'
+          text: 'This cluster represents <b>{cluster_count}</b> sensors.'
         }
       ]
     }
@@ -70,7 +72,7 @@ require([
       content: [
         {
           type: 'text',
-          text: 'This cluster represents <b>{cluster_count}</b> features.'
+          text: 'This cluster represents <b>{cluster_count}</b> gateways.'
         }
       ]
     }
@@ -87,6 +89,7 @@ require([
       ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
     const d = date.getDate() < 10
       ? `0${date.getDate()}` : `${date.getDate()}`;
+
     return `${m}/${d}/${date.getFullYear()}`;
   }
 
@@ -161,7 +164,11 @@ require([
     if (feature.graphic.layer === sensorsLayer) {
       attrs = [
         {
-          value: feature.graphic.attributes.sensor_type_label,
+          value: feature.graphic.attributes.sensor_id,
+          label: 'Sensor ID'
+        },
+        {
+          value: feature.graphic.attributes.sensor_type,
           label: 'Type'
         },
         {
@@ -169,52 +176,50 @@ require([
           label: 'Node Ref'
         },
         {
-          value: feature.graphic.attributes.POSTCODE,
-          label: 'Postcode'
-        },
-        {
-          value: feature.graphic.attributes.THOROUGHFARE,
-          label: 'Road'
-        },
-        {
-          value: feature.graphic.attributes.TOWN,
-          label: 'Town'
-        },
-        {
-          value: feature.graphic.attributes.DAM_AREA,
-          label: 'DAM Area'
+          value: feature.graphic.attributes.install_name,
+          label: 'Installed By'
         },
         {
           value: dateToString(
-            normDate(feature.graphic.attributes.CreationDate)
+            new Date(feature.graphic.attributes.CreationDate)
           ),
-          label: 'Creation Date'
+          label: 'Date Instlled'
         }
       ];
     } else if (feature.graphic.layer === gatewaysLayer) {
       attrs = [
+
         {
-          value: feature.graphic.attributes.survey_id,
-          label: 'Survey ID'
+          value: feature.graphic.attributes.gateway_id,
+          label: 'Gateway ID'
         },
         {
-          value: feature.graphic.attributes.uu_building,
-          label: 'UU Building Available?'
+          value: feature.graphic.attributes.asset_location,
+          label: 'Gateway Location'
         },
         {
-          value: feature.graphic.attributes.power_source,
-          label: 'Power Source Available?'
+          value: feature.graphic.asset_location_other,
+          label: 'Other Gateway Location'
         },
         {
-          value: feature.graphic.attributes.socket_type,
-          label: 'Socket Type'
+          value: feature.graphic.attributes.gateway_installed,
+          label: 'Gateway Installed'
+        },
+        {
+          value: feature.graphic.attributes.rain_sensor_installed,
+          label: 'Rain Sensor Installed'
+        },
+        {
+          value: feature.graphic.attributes.install_name,
+          label: 'Installed By'
         },
         {
           value: dateToString(
-            normDate(feature.graphic.attributes.CreationDate)
+            new Date(feature.graphic.attributes.CreationDate)
           ),
-          label: 'Creation Date'
+          label: 'Date Installed'
         }
+
       ];
     }
     div.innerHTML = popupTemplateContentAttrTable(attrs);
@@ -225,12 +230,14 @@ require([
    * @type {PopupTemplate}
    */
   const sensorsPopupTemplate = {
-    title: '{sensor_type_label} - {POSTCODE}',
+    title: '{sensor_id} - {sensor_type} - {POSTCODE}',
     lastEditInfoEnabled: false,
     content: popupTemplateContent,
     outFields: [
-      'sensor_type_label',
+      'sensor_id',
+      'sensor_type',
       'NODEREFERE',
+      'install_name',
       'POSTCODE',
       'THOROUGHFARE',
       'TOWN',
@@ -240,16 +247,41 @@ require([
   };
 
   /**
+   * @type {WebTileLayer}
+   */
+  const tileLayer = new WebTileLayer({
+    urlTemplate: serviceUrl + '/Light_3857/{level}/{col}/{row}.png?key=' + apiKey
+  });
+
+  /**
+   * @type {FeatureLayer}
+   */
+  const Nodelayer = new FeatureLayer({
+    url:
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_manholes_wgs_master_JS_view/FeatureServer/0'
+  });
+
+  /**
+   * @type {FeatureLayer}
+   */
+  const Sewerlayer = new FeatureLayer({
+    url:
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/saph_uu_gravity_sewers_all_master_wgs_JS_view/FeatureServer/0'
+  });
+
+  /**
    * @type {FeatureLayer}
    */
   const sensorsLayer = new FeatureLayer({
     url:
-      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_pre_install_wgs_master/FeatureServer/0',
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_install_view_v2/FeatureServer/0',
     featureReduction: sensorsClusterConfig,
     popupTemplate: sensorsPopupTemplate,
     outFields: [
-      'sensor_type_label',
+      'sensor_id',
+      'sensor_type',
       'NODEREFERE',
+      'install_name',
       'POSTCODE',
       'THOROUGHFARE',
       'TOWN',
@@ -262,15 +294,16 @@ require([
    * @type {PopupTemplate}
    */
   const gatewaysPopupTemplate = {
-    title: '{ObjectId}',
+    title: '{gateway_id} - {asset_location}',
     lastEditInfoEnabled: false,
     content: popupTemplateContent,
     outFields: [
-      'ObjectId',
-      'survey_id',
-      'uu_building',
-      'power_source',
-      'socket_type',
+      'gateway_id',
+      'asset_location',
+      'asset_location_other',
+      'gateway_installed',
+      'rain_sensor_installed',
+      'install_name',
       'CreationDate'
     ]
   };
@@ -280,15 +313,16 @@ require([
    */
   const gatewaysLayer = new FeatureLayer({
     url:
-      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_gateway_pre_install_surveys_view/FeatureServer/0',
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_gateway_install_view/FeatureServer/0',
     featureReduction: gatewaysClusterConfig,
     popupTemplate: gatewaysPopupTemplate,
     outFields: [
-      'ObjectId',
-      'survey_id',
-      'uu_building',
-      'power_source',
-      'socket_type',
+      'gateway_id',
+      'asset_location',
+      'asset_location_other',
+      'gateway_installed',
+      'rain_sensor_install',
+      'install_name',
       'CreationDate'
     ]
   });
@@ -313,8 +347,15 @@ require([
    * @type {Map}
    */
   const map = new Map({
-    basemap: 'gray-vector',
-    layers: [DAMlayer, IDASlayer, sensorsLayer, gatewaysLayer]
+    layers: [
+      tileLayer,
+      Nodelayer,
+      Sewerlayer,
+      DAMlayer,
+      IDASlayer,
+      sensorsLayer,
+      gatewaysLayer
+    ]
   });
 
   /**
@@ -323,8 +364,13 @@ require([
   const view = new MapView({
     map: map,
     container: 'viewDiv',
-    center: [-2.66042, 54.001848],
-    zoom: 6.5,
+    center: [-3.333679, 53.982117],
+    zoom: 7,
+    constraints: {
+      minZoom: 6,
+      maxZoom: 22,
+      rotationEnabled: false
+    },
     popup: {
       dockEnabled: true,
       dockOptions: {
@@ -381,13 +427,16 @@ require([
    */
   function timeSliderFullTimeExtentExtend (start, end) {
     if (!timeSlider.fullTimeExtent) {
-      timeSlider.fullTimeExtent = { start, end };
+      timeSlider.fullTimeExtent = {
+        start: startDate(start),
+        end: endDate(end)
+      };
     } else {
       if (dateCompare(start, timeSlider.fullTimeExtent.start) === 1) {
-        timeSlider.fullTimeExtent.start = start;
+        timeSlider.fullTimeExtent.start = startDate(start);
       }
       if (dateCompare(end, timeSlider.fullTimeExtent.end) === -1) {
-        timeSlider.fullTimeExtent.end = end;
+        timeSlider.fullTimeExtent.end = endDate(end);
       }
     }
     timeSlider.values = [
@@ -405,8 +454,18 @@ require([
   /**
    * Helper function to norm date
    */
-  function normDate (d) {
-    return new Date(d);
+  function startDate (d) {
+    const d2 = new Date(d);
+    return new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+  }
+
+  /**
+   * Helper function to norm date
+   */
+  function endDate (d) {
+    const d2 = startDate(d);
+    d2.setHours(23, 59, 59);
+    return d2;
   }
 
   /**
@@ -419,8 +478,8 @@ require([
           return;
         }
         timeSliderFullTimeExtentExtend(
-          normDate(response.features[0].attributes.min),
-          normDate(response.features[0].attributes.max)
+          new Date(response.features[0].attributes.min),
+          new Date(response.features[0].attributes.max)
         );
       });
     featureLayerFullTimeExtent(gatewaysLayer, 'CreationDate')
@@ -429,8 +488,8 @@ require([
           return;
         }
         timeSliderFullTimeExtentExtend(
-          normDate(response.features[0].attributes.min),
-          normDate(response.features[0].attributes.max)
+          new Date(response.features[0].attributes.min),
+          new Date(response.features[0].attributes.max)
         );
       });
   }
@@ -449,6 +508,7 @@ require([
     new Expand({
       expandTooltip: 'Show Legend',
       expanded: false,
+      autoCollapse: true,
       view: view,
       content: new Legend({ view: view })
     }),
@@ -459,6 +519,7 @@ require([
     new Expand({
       expandTooltip: 'Show Search',
       expanded: false,
+      autoCollapse: true,
       view: view,
       content: new Search({
         view: view,
@@ -477,9 +538,9 @@ require([
             minSuggestCharacters: 0
           }
         ],
-        includeDefaultSources: false,
+        includeDefaultSources: true,
         locationEnabled: false,
-        searchAllEnabled: false
+        searchAllEnabled: true
       })
     }),
     'top-left'
@@ -499,7 +560,8 @@ require([
       view: view,
       content: document.getElementById('measureDiv'),
       expandIconClass: 'esri-icon-measure',
-      expanded: false
+      expanded: false,
+      autoCollapse: true
     }),
     'top-left'
   );
@@ -515,7 +577,8 @@ require([
       expandTooltip: 'Show TimeSlider',
       content: timeSlider.domNode,
       expandIconClass: 'esri-icon-filter',
-      expanded: false
+      expanded: false,
+      autoCollapse: true
     }),
     'top-left'
   );
@@ -534,28 +597,28 @@ require([
    * @param {string} b - Level b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function compareLevels (a, b) {
-    if (!a) {
-      return -1;
-    }
-    if (!b) {
-      return 1;
-    }
-    if (a === '4G') {
-      return -1;
-    }
-    if (b === '4G') {
-      return 1;
-    }
-    if (a === 'LoRaWAN') {
-      return -1;
-    }
-    if (b === 'LoRaWAN') {
-      return 1;
-    }
+  // function compareLevels (a, b) {
+  //   if (!a) {
+  //     return -1;
+  //   }
+  //   if (!b) {
+  //     return 1;
+  //   }
+  //   if (a === '4G') {
+  //     return -1;
+  //   }
+  //   if (b === '4G') {
+  //     return 1;
+  //   }
+  //   if (a === 'LoRaWAN') {
+  //     return -1;
+  //   }
+  //   if (b === 'LoRaWAN') {
+  //     return 1;
+  //   }
 
-    return 0;
-  }
+  //   return 0;
+  // }
 
   /**
    * Compare two features.
@@ -564,12 +627,12 @@ require([
    * @param {Feature} b - Feature b
    * @return {number} -1 if a < b, 0 if a = b, 1 if a > b
    */
-  function sensorsCompareFeatures (a, b) {
-    return -1 * compareLevels(
-      a.attributes.sensor_type_label,
-      b.attributes.sensor_type_label
-    );
-  }
+  // function sensorsCompareFeatures (a, b) {
+  //   return -1 * compareLevels(
+  //     a.attributes.sensor_type,
+  //     b.attributes.sensor_type
+  //   );
+  // }
 
   /**
    * Create and return a listNode item.
@@ -603,21 +666,19 @@ require([
    */
   function listNodeCreateItemContent (feature) {
     if (feature.layer === sensorsLayer) {
-      return safeAttrValue(feature.attributes.sensor_type_label) +
+      return safeAttrValue(feature.attributes.sensor_type) +
         ' | ' +
         safeAttrValue(feature.attributes.POSTCODE) +
         ' | ' +
         safeAttrValue(feature.attributes.THOROUGHFARE) +
         ' | ' +
-        safeAttrValue(dateToString(normDate(feature.attributes.CreationDate)));
+        safeAttrValue(dateToString(new Date(feature.attributes.CreationDate)));
     } else if (feature.layer === gatewaysLayer) {
-      return safeAttrValue(feature.attributes.survey_id) +
+      return safeAttrValue(feature.attributes.gateway_id) +
         ' | ' +
-        safeAttrValue(feature.attributes.power_source) +
+        safeAttrValue(feature.asset_location) +
         ' | ' +
-        safeAttrValue(feature.attributes.socket_type) +
-        ' | ' +
-        safeAttrValue(dateToString(normDate(feature.attributes.CreationDate)));
+        safeAttrValue(dateToString(new Date(feature.attributes.CreationDate)));
     }
     return 'no layer';
   };
@@ -648,7 +709,7 @@ require([
     graphics = [];
     let count = 0;
     if (sensorsLayer.visible && sensorsGraphics) {
-      sensorsGraphics.sort(sensorsCompareFeatures);
+      // sensorsGraphics.sort(sensorsCompareFeatures);
       graphics = graphics.concat(sensorsGraphics);
       count = sensorsGraphics.length;
     }
@@ -680,7 +741,7 @@ require([
           .queryFeatures({
             geometry: view.extent,
             returnGeometry: true,
-            orderByFields: ['sensor_type_label']
+            orderByFields: ['CreationDate']
           })
           .then(function (results) {
             sensorsGraphics = results.features;
@@ -699,7 +760,8 @@ require([
         layerView
           .queryFeatures({
             geometry: view.extent,
-            returnGeometry: true
+            returnGeometry: true,
+            orderByFields: ['CreationDate']
           })
           .then(function (results) {
             gatewaysGraphics = results.features;
@@ -735,7 +797,7 @@ require([
           });
         })
         .catch(function (error) {
-          if (error.sensor_type_label !== 'AbortError') {
+          if (error.sensor_type !== 'AbortError') {
             console.error(error);
           }
         });
@@ -794,7 +856,7 @@ require([
   toggleGatewaysBtn.addEventListener('click', toggleGatewaysVisibility);
 
   /**
-   * Click event handler for seasonsElement.
+   * Click event handler for sources.
    *
    * @param {MouseEvent} event
    */
@@ -825,26 +887,26 @@ require([
   function layerViewFilterUpdate () {
     const filter = {
       where:
-      extractBetween(
-        'YEAR',
-        'CreationDate',
-        timeSlider.timeExtent.start.getFullYear(),
-        timeSlider.timeExtent.end.getFullYear()
-      ) +
-      ' AND ' +
-      extractBetween(
-        'MONTH',
-        'CreationDate',
-        timeSlider.timeExtent.start.getMonth() + 1,
-        timeSlider.timeExtent.end.getMonth() + 1
-      ) +
-      ' AND ' +
-      extractBetween(
-        'DAY',
-        'CreationDate',
-        timeSlider.timeExtent.start.getDate(),
-        timeSlider.timeExtent.end.getDate()
-      )
+        extractBetween(
+          'YEAR',
+          'CreationDate',
+          timeSlider.timeExtent.start.getFullYear(),
+          timeSlider.timeExtent.end.getFullYear()
+        ) +
+        ' AND ' +
+        extractBetween(
+          'MONTH',
+          'CreationDate',
+          timeSlider.timeExtent.start.getMonth() + 1,
+          timeSlider.timeExtent.end.getMonth() + 1
+        ) +
+        ' AND ' +
+        extractBetween(
+          'DAY',
+          'CreationDate',
+          timeSlider.timeExtent.start.getDate(),
+          timeSlider.timeExtent.end.getDate()
+        )
     };
     if (sensorsLayer) {
       sensorsLayer.definitionExpression = filter.where;

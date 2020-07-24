@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Zoom to location with URL Parameters</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.16/"></script>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/LayerList",
+      "esri/geometry/Point",
+      "esri/geometry/Extent"
+    ], function (Map, MapView, FeatureLayer, LayerList, Point, Extent) {
+
+      /**
+       * Returns value of a url parameter
+       *
+       * @param {string} name - The name of the parameter
+       * @returns {string} The value of the parameter 
+       */
+      function getUrlParam(name) {
+        if ('URLSearchParams' in window) {
+          const url = new URL(document.URL);
+          const search_params = url.searchParams;
+          if (search_params.has(name)) {
+            return search_params.get('id');
+          }
+        };
+        return null;
+      }
+
+      /**
+       * Returns the result of including a point in a extent
+       *
+       * @param {Point} pto - The point to include
+       * @param {Extent} ext - The base extent
+       * @returns {Extent} The result extent
+       */
+      function addPointToExtent(pto, ext) {
+        if (!pto) {
+          return ext;
+        }
+        let e;
+        if (!ext) {
+          e = new Extent({
+            xmin: pto.x,
+            xmax: pto.x,
+            ymin: pto.y,
+            ymax: pto.y,
+            spatialReference: {
+              wkid: 102100
+            }
+          });
+        } else {
+          e = ext.clone();
+          if (pto.x < e.xmin) {
+            e.xmin = pto.x;
+          } 
+          if (pto.x > e.xmax) {
+            ext.xmax = pto.x;
+          }
+          if (pto.y < e.ymin) {
+            e.ymin = pto.y;
+          } 
+          if (pto.y > e.ymax) {
+            ext.ymax = pto.y;
+          }
+        }
+        return e;
+      }
+
+      /**
+       * @type {number}
+       */
+      const POINT_ZOOM_LEVEL = 15;
+
+      /**
+       * @type {Map}
+       */
+      const map = new Map({
+        basemap: 'gray-vector'
+      });
+
+      /**
+       * @type {PopupTemplate}
+       */
+      const popupTemplate = {
+        title: 'Sensor ID: {DEVICE_ID}',
+        content: '{DEVICE_ID}'
+      };
+
+      /**
+       * @type {string}
+       */
+      const sensor_id = getUrlParam('id');
+
+      /**
+       * @type {string}
+       */
+      const expr = sensor_id ? `DEVICE_ID='${sensor_id}'` : '1=1';
+
+      /**
+       * @type {FeatureLayer}
+       */
+      const liveSensorLayer = new FeatureLayer({
+        url: 'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_live_flood_sensors_wgs_master/FeatureServer/0',
+        definitionExpression: expr,
+        title: sensor_id,
+        popupTemplate: popupTemplate,
+      });
+
+      map.add(liveSensorLayer);
+
+      /**
+       * @type {MapView}
+       */
+      const view = new MapView({
+        container: 'viewDiv',
+        map: map,
+        center: new Point({ x: -2.692337, y: 53.765762 }),
+        zoom: 8,
+      });
+
+      /**
+       * @type {LayerList}
+       */
+      const layerList = new LayerList({
+        view: view
+      });
+
+      view.ui.add(layerList, {
+        position: "top-right"
+      });
+
+      /**
+       * @type {Query}
+       */
+      const liveSensorQuery = liveSensorLayer.createQuery();
+      liveSensorQuery.outSpatialReference = {
+        wkid: 102100
+      };
+      liveSensorLayer.queryFeatures(liveSensorQuery).then(
+        function (response) {
+          if (!response.features) {
+            return;
+          }
+          const gs = response.features.map(f => f.geometry);
+          if (gs.length === 1) {
+            view.goTo({
+              target: gs[0],
+              zoom: POINT_ZOOM_LEVEL
+            });
+            console.log(`target: ${JSON.stringify(gs[0].toJSON())}`)
+            console.log(`view (center, zoom): ${JSON.stringify(view.center.toJSON())} ${view.zoom}`);
+          } else if (gs.length > 1){
+            const e = gs.reduce(
+              (p, c) => addPointToExtent(c, p),
+              null
+            );
+            view.goTo({
+              target: e.expand(1.05)
+            });
+            console.log(`target: ${JSON.stringify(e.toJSON())}`)
+            console.log(`view (center, zoom): ${JSON.stringify(view.center.toJSON())} ${view.zoom}`);
+          }
+        }
+      );
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
