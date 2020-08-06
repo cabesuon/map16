@@ -4,123 +4,57 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
-    integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css"/>
   <title>map16 - index</title>
-  <style>
-    .page-title {
-      border: black 1px solid;
-      background-color: lightsteelblue;
-      color: black;
-      padding: 1rem;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="container">
-
-    <div class="row mt-1 mb-2">
-      <div class="col">
-        <h1 class="page-title">Freelance works for map16</h1>
-      </div>
+  <header>
+    <a href="#" class="logo">manuelmartinezluz</a>
+    <ul>
+      <li><a href="#">Monitoring Overview</a></li>
+      <li><a href="#">Sensors</a></li>
+      <li><a href="#">Cameras</a></li>
+      <li><a href="#">Installs</a></li>
+      <li><a href="#">Other</a></li>
+    </ul>
+  </header>
+  <section class="banner">
+    <div class="content">
+      <h2>map16</h2>
+      <p>
+        These repository is product of my freelance work for England and Wales company "map16 Asset Management Ltd".
+        My main collaboration with the team is Web GIS development using ArcGIS JavaScript API.
+      </p>
     </div>
-
-    <div class="row mb-2">
-
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">Monitoring Overview</h2>
-            <p class="card-text">Last Update: 07/27/2020</p>
-            <a href="./monitoring-overview/" target="_blank" class="card-link">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">Flood Sensors</h2>
-            <p class="card-text">Last Update: 07/27/2020</p>
-            <a href="./flood-sensors/" target="_blank" class="card-link">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">River Sensors</h2>
-            <p class="card-text">Last Update: 07/27/2020</p>
-            <a href="./river-sensors/" target="_blank" class="card-link">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
+  </section>
+  <section class="monitoring-overview">
+    <div class="content">
+      <h2>Monitoring Overview</h2>
+      <p>Last Update: 07/27/2020</p>
+      <a href="#">Dashboard</a>
     </div>
-    <div class="row mb-2">
-
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">Cameras</h2>
-            <p class="card-text">
-              Last Update: 07/27/2020
-            </p>
-            <a href="./cameras/" target="_blank" class="card-link">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">Pre-Installs</h2>
-            <p class="card-text">
-              Last Update: 07/28/2020
-            </p>
-            <a href="./pre-installs/" target="_blank" class="card-link">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">Live-Installs</h2>
-            <p class="card-text">
-              Last Update: 07/27/2020
-            </p>
-            <a href="./live-installs/" target="_blank" class="card-link">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
+    <div class="updates">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
-    <div class="row mb-2">
+  </section>
 
-      <div class="col-4">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="card-title">Other</h2>
-            <p class="card-text">
-              Last Update: 07/27/2020
-            </p>
-            <a href="./other/" target="_blank">Dashboard</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <a class="btn btn-outline-secondary btn-block" href="tasks.html" role="button">Tasks History</a>
-      </div>
-    </div>
-
-  </div>
+  <script>
+    window.addEventListener('scroll', function () {
+      const header = document.querySelector('header');
+      header.classList.toggle('sticky', window.scrollY > 0);
+    });
+  </script>  
 </body>
 
 </html>
