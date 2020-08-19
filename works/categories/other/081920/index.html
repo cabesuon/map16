@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>map16 | Flood Analytics</title>
+
+  <!-- <link href="css/styles.css" rel="stylesheet"/> -->
+
+  <style>
+    #chart {
+      max-width: 1000px;
+      max-height: 240px;
+      margin: 35px auto;
+    }
+  </style>
+
+  <script>
+    window.Promise ||
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"><\/script>'
+      )
+    window.Promise ||
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20171210/classList.min.js"><\/script>'
+      )
+    window.Promise ||
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/findindex_polyfill_mdn"><\/script>'
+      )
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div id="chart"></div>
+
+  <script>
+    var options = {
+      series: [
+        { name: 'Manhole Level', data: []},
+        { name: 'Rain Level', data: []}
+      ],
+      chart: {
+        height: 500,
+        type: 'area',
+      },
+      dataLabels: {
+        enabled: false
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          inverseColors: false,
+          opacityFrom: 0.3,
+          opacityTo: 0.1,
+          stops: [25, 90, 100]
+        },
+      },
+      colors: ['#1565c0', '#26c6da'],
+      stroke: {
+        curve: 'smooth',
+        /*lineCap: 'butt',*/
+        colors: ['#1565c0', '#26c6da'],
+        width: 2,
+        dashArray: [0, 2],
+
+      },
+      noData: {
+        text: 'Loading map16 Analytics...'
+      },
+      xaxis: {
+        type: 'datetime',
+        tickPlacement: 'on',
+        labels: {
+          /*rotate: -45,
+          rotateAlways: true*/
+        }
+      },
+      yaxis: [
+        {
+          seriesName: 'Manhole Level (mm)',
+          forceNiceScale: true,
+          min: 0,
+          max: 1000,
+          axisTicks: {
+            show: true,
+          },
+          axisBorder: {
+            show: true,
+            color: '#1565c0'
+          },
+          labels: {
+            style: {
+              colors: '#1565c0',
+            },
+          },
+          title: {
+            text: "Manhole Level (mm)",
+            style: {
+              color: '#1565c0',
+            }
+          },
+          tooltip: {
+            enabled: true
+          }
+        },
+        {
+          seriesName: 'Rain (mm)',
+          forceNiceScale: true,
+          min: 0,
+          /*max:15,*/
+          opposite: true,
+          axisTicks: {
+            show: true,
+          },
+          axisBorder: {
+            show: true,
+            color: '#26c6da'
+          },
+          labels: {
+            style: {
+              colors: '#26c6da',
+            },
+          },
+          title: {
+            text: "Rain (mm)",
+            style: {
+              color: '#26c6da',
+            }
+          }
+        },
+      ],
+      legend: {
+        position: 'top'
+      },
+      annotations: {
+        position: 'front',
+        yaxis: [
+          {
+            y: 600,
+            borderColor: '#bf360c',
+            fillColor: '#bf360c',
+            opacity: 0.2,
+            label: {
+              borderColor: '#bf360c',
+              style: {
+                color: '#fff',
+                background: '#bf360c'
+              },
+              text: 'Red Alert Level'
+            }
+          },
+          {
+            y: 400,
+            borderColor: '#ff6f00',
+            fillColor: '#ff6f00',
+            opacity: 0.2,
+            label: {
+              borderColor: '#ff6f00',
+              style: {
+                color: '#fff',
+                background: '#ff6f00'
+              },
+              text: 'Amber Alert Level'
+            }
+          }
+        ]
+      },
+      tooltip: {
+        enabled: true,
+        enabledOnSeries: undefined,
+        x: {
+          show: true,
+          format: 'HH:mm:ss - MMM dd',
+          formatter: undefined,
+        },
+      }
+    };
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+    function getManholeData() {
+      return fetch('json_data/data1.json')
+      .then(response => response.json());
+    }
+
+    function getRainData() {
+      return fetch('json_data/data2.json')
+      .then(response => response.json());
+    }
+
+    function addSeries() {
+      Promise.all([getManholeData(), getRainData()])
+      .then(
+        ([manholeData, rainData]) => chart.updateSeries([
+          { data: manholeData },
+          { data: rainData }
+        ], true)
+      )
+      .catch(error => console.log(error));
+    }
+
+    addSeries();
+  </script>
+
+
+</body>
+
+</html>

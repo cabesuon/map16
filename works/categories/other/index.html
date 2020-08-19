@@ -4,45 +4,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css" />
+  <link rel="stylesheet" href="../../css/style.css"/>
   <title>map16</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .danger-note {
-      background-color: crimson;
-      color: white;
-      font-size: large;
-      padding: 1rem;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="panel-container esri-widget">
+  <header>
+    <a href="/works/index.html" class="logo">manuelmartinezluz</a>
+    <ul>
+      <li><a href="#">Testing</a></li>
+      <li><a href="/works/tasks-history.html">Tasks-History</a></li>
+    </ul>
+  </header>
+
+  <section class="table-container">
     <div class="danger-note">
-      This is the old <i>index.html</i> from first version of repository.
-      The following works were move to the categories folder, are not longer maintain and will be remove in the future:
-      <ul>
-        <li>07/19/2020 -> monitoring-overview</li>
-        <li>06/05/2020 -> flood-sensors</li>
-        <li>06/26/2020 -> river-sensors</li>
-        <li>07/10/2020 -> cameras</li>
-        <li>07/03/2020 -> pre-installs</li>
-        <li>07/22/2020 -> live-installs</li>
-      </ul>
+      <p>
+        This is the old <i>index.html</i> from first version of repository. 
+        The following works were move to the categories folder, and will be remove in the near future:
+        <ul>
+          <li>07/19/2020 -> monitoring-overview</li>
+          <li>06/05/2020 -> flood-sensors</li>
+          <li>06/26/2020 -> river-sensors</li>
+          <li>07/10/2020 -> cameras</li>
+          <li>07/03/2020 -> pre-installs</li>
+          <li>07/22/2020 -> live-installs</li>
+        </ul>
+      </p>
     </div>
-    <h1>Freelance works for map16</h1>
+    
     <table>
       <thead>
         <tr>
@@ -620,7 +610,14 @@
         </tr>
       </tbody>
     </table>
-  </div>
+  </section>
+
+  <script>
+    window.addEventListener('scroll', function () {
+      const header = document.querySelector('header');
+      header.classList.toggle('sticky', window.scrollY > 0);
+    });
+  </script>
 </body>
 
 </html>

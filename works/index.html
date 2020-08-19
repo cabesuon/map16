@@ -10,42 +10,70 @@
 
 <body>
   <header>
-    <a href="#" class="logo">manuelmartinezluz</a>
+    <a href="index.html" class="logo">manuelmartinezluz</a>
     <ul>
-      <li><a href="#">Monitoring Overview</a></li>
-      <li><a href="#">Sensors</a></li>
-      <li><a href="#">Cameras</a></li>
-      <li><a href="#">Installs</a></li>
-      <li><a href="#">Other</a></li>
+      <li><a href="#">Testing</a></li>
+      <li><a href="tasks-history.html">Tasks-History</a></li>
     </ul>
   </header>
   <section class="banner">
     <div class="content">
       <h2>map16</h2>
       <p>
-        These repository is product of my freelance work for England and Wales company "map16 Asset Management Ltd".
-        My main collaboration with the team is Web GIS development using ArcGIS JavaScript API.
+        These repository is product of my freelance work for "map16 Asset Management Ltd" (England and Wales company).
+        I collaborate with the team in Web GIS development, mainly using ArcGIS JavaScript API.
       </p>
     </div>
   </section>
-  <section class="monitoring-overview">
-    <div class="content">
-      <h2>Monitoring Overview</h2>
-      <p>Last Update: 07/27/2020</p>
-      <a href="#">Dashboard</a>
+  <section class="categories" #categories>
+    <div class="category">
+      <a href="#" target="_blank" class="category-link">
+        <span class="monitoring-overview" data-text="Monitoring Overview">
+          Monitoring Overview
+        </span>
+      </a>
     </div>
-    <div class="updates">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Hours</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+    <div class="category">
+      <a href="#" target="_blank" class="category-link">
+        <span class="flood-sensors" data-text="Flood Sensors">
+          Flood Sensors
+        </span>
+      </a>
+    </div>
+    <div class="category">
+      <a href="#" target="_blank" class="category-link">
+        <span class="rain-sensors" data-text="Rain Sensors">
+          Rain Sensors
+        </span>
+      </a>
+    </div>
+    <div class="category">
+      <a href="#" target="_blank" class="category-link">
+        <span class="cameras" data-text="Cameras">
+          Cameras
+        </span>
+      </a>
+    </div>
+    <div class="category">
+      <a href="#" target="_blank" class="category-link">
+        <span class="pre-installs" data-text="Pre-Installs">
+          Pre-Installs
+        </span>
+      </a>
+    </div>
+    <div class="category">
+      <a href="#" target="_blank" class="category-link">
+        <span class="live-installs" data-text="Live Installs">
+          Live Installs
+        </span>
+      </a>
+    </div>
+    <div class="category">
+      <a href="categories/other/index.html" target="_blank" class="category-link">
+        <span class="others" data-text="Others">
+          Others
+        </span>
+      </a>
     </div>
   </section>
 
@@ -54,7 +82,7 @@
       const header = document.querySelector('header');
       header.classList.toggle('sticky', window.scrollY > 0);
     });
-  </script>  
+  </script>
 </body>
 
 </html>
