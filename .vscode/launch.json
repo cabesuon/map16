@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "https://QW9LI0VZNNTOOAD-FMCADW1.adb.uk-london-1.oraclecloudapps.com/ords/xxmap16/oauth/token",
+                "https://qw9li0vznntooad-fmcadw1.adb.uk-london-1.oraclecloudapps.com/ords/enigma/map16/LatestVehiclePositions",
+                "89KiFIzrC9vQK1I9WN1W5g..",
+                "GVe_vJZZnZ35bRW_prDRTA.."
+            ]
+        }
+    ]
+}
