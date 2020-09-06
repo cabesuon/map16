@@ -1,8 +1,0 @@
-{
-  "eslint.enable": true,
-  "liveServer.settings.CustomBrowser": "chrome",
-  "python.linting.enabled": true,
-  "python.linting.pylintArgs": [],
-  "python.linting.pylintEnabled": true,
-  "python.formatting.autopep8Args": ["--max-line-length", "100"]
-}
