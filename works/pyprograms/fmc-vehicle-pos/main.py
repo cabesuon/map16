@@ -3,11 +3,6 @@ Examples:
   $python main.py -h.
   $python main.py url_token url_data client_id client_secret --outdir . --outfilename result.json.
 """
-from pyprograms.commons.oauth_client import (
-    OAuthClientManager, OAuthClientManagerError, OAuthClientService, OAuthClientCredentials
-)
-from pyprograms.commons.time import TimeManager, get_str_time
-from pyprograms.commons.file import FileManager, FileManagerError
 import os
 import sys
 import argparse
@@ -17,10 +12,14 @@ import json
 # add top level package to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 # pylint: disable=wrong-import-position
+from pyprograms.commons.oauth_client import (
+    OAuthClientManager, OAuthClientManagerError, OAuthClientService, OAuthClientCredentials
+)
+from pyprograms.commons.time import TimeManager, get_str_time
+from pyprograms.commons.file import FileManager, FileManagerError
 # pylint: enable=wrong-import-position
 _ = gettext.gettext
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
-
 
 def get_args():
     """ Return arguments from input. """
