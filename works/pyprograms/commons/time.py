@@ -35,7 +35,7 @@ def get_str_time():
     Returns:
       datetime object.
     """
-    return datetime.now().strftime('%m-%d-%Y')
+    return datetime.now().strftime('%d%m%y-%H%M')
 
 
 def get_duration(start, end, unit=TimeUnit.second):

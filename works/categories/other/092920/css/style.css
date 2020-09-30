@@ -1,0 +1,133 @@
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin : 0;
+  height : 100%;
+  width  : 100%;
+}
+
+:focus {
+  outline: none !important;
+}
+
+#seasons-filter {
+  height: 185px;
+  width : 130px;
+}
+
+.season-item {
+  width         : 100%;
+  padding       : 12px;
+  text-align    : center;
+  vertical-align: baseline;
+  cursor        : pointer;
+  height        : 40px;
+  color         : #fff;
+}
+
+.season-item:focus {
+  color: black;
+}
+
+.season-item:hover {
+  color: black;
+}
+
+#titleDiv {
+  padding: 10px;
+}
+
+#titleText {
+  font-size     : 20pt;
+  font-weight   : 60;
+  padding-bottom: 10px;
+}
+
+.panel-container {
+  position: relative;
+  width   : 100%;
+  height  : 100%;
+}
+
+.panel-side {
+  padding   : 2px;
+  box-sizing: border-box;
+  width     : 100%;
+  height    : 100%;
+  position  : absolute;
+  top       : 0;
+  right     : 0;
+  color     : #fff;
+  overflow  : auto;
+  z-index   : 60;
+}
+
+.panel-side h3 {
+  padding: 0 20px;
+  margin : 20px 0;
+}
+
+.panel-side ul {
+  list-style: none;
+  margin    : 0;
+  padding   : 0;
+}
+
+.panel-side li {
+  list-style: none;
+  padding   : 10px 20px;
+}
+
+.panel-result {
+  cursor: pointer;
+  margin: 2px 0;
+}
+
+.panel-result:hover,
+.panel-result:focus {
+  color: black;
+}
+
+#infoDiv {
+  background: white;
+  padding   : 1rem;
+}
+
+.cluster-max-zoom-level-wrapper {
+  margin-top: 1rem;
+  width     : 15rem;
+}
+
+#clusteringUntilZoomLevel {
+  margin-top: .5rem;
+  width     : 15rem;
+  height    : 2.5rem;
+}
+
+#currentZoomLevelValue {
+  color        : red;
+  font-weight  : bold;
+  font-size    : large;
+  margin-top   : .5rem;
+  margin-bottom: .5rem;
+}
+
+.mt-3 {
+  margin-top: 3rem;
+}
+
+#applicationDiv {
+  width         : 100%;
+  height        : 100%;
+  display       : flex;
+  flex-direction: column;
+  overflow      : hidden;
+}
+
+#viewDiv {
+  width : 100%;
+  height: 100%;
+  flex  : 1 1 auto;
+  order : 1;
+}

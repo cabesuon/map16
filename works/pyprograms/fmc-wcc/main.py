@@ -1,4 +1,4 @@
-"""Main program to consume FMC vehicle position service.
+"""Main program to consume FMC API services.
 Examples:
   $python main.py -h.
   $python main.py url_token url_data client_id client_secret --outdir . --outfilename result.json.
@@ -42,16 +42,27 @@ def get_args():
         default='result.json',
         help=_('output file name')
     )
+    parser.add_argument(
+        '--loglevel',
+        default='ERROR',
+        choices=['DEBUG', 'INFO', 'ERROR'],
+        help=_('logging level')
+    )
     args = parser.parse_args()
     return args
 
 
-def init_logging():
+def init_logging(loglevel):
     """ Helper function to initialize logging."""
-    logger.setLevel(logging.INFO)
+    level = logging.ERROR
+    if loglevel == 'DEBUG':
+        level = logging.DEBUG
+    elif loglevel == 'INFO':
+        level = logging.INFO
+    logger.setLevel(level)
     # create a file handler
     handler = logging.FileHandler('{}.log'.format(get_str_time()))
-    handler.setLevel(logging.INFO)
+    handler.setLevel(level)
     # create a logging format
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -98,23 +109,88 @@ def init_oauth_client_manager(url_token, url_data, client_id, client_secret):
 
 
 def process(oman):
-    """ Helper function to initialize the oauth client manager.
+    """ Helper function to process the request.
     Args:
       oman: OAuthClientManager object.
     Returns:
-      A json object.
+      A json string.
     """
+    result = {}
+    has_more = True
+    pag_keys = ('hasMore', 'limit', 'offset', 'count', 'links')
     try:
-        return json.dumps(oman.request_data())
+        i = 1
+        while has_more:
+            logger.info('%s:%d.', _('Request'), i)
+            i += 1
+            # make request
+            r = oman.request_data()
+            logger.info('%s %s:[%s].', _('Response'), _('Keys'), ', '.join(r.keys()))
+            # store data
+            for k in r.keys():
+                # check if is a paginition key
+                if k in pag_keys:
+                    continue
+                # rules:
+                # list values from same key are concatenated
+                # last value is kept for non list values
+                if k not in result or not isinstance(r[k], list):
+                    result[k] = r[k]
+                else:
+                    result[k] = result[k] + r[k]
+                if not isinstance(r[k], list):
+                    logger.info(
+                        '%s:%s - %s:%s.',
+                        _('Key'),
+                        k,
+                        _('Result'),
+                        str(result[k])
+                    )
+                else:
+                    logger.info(
+                        '%s:%s - %s %s:%d - %s:%d.',
+                        _('Key'),
+                        k,
+                        _('Result'),
+                        _('Count'),
+                        len(r[k]),
+                        _('Sum'),
+                        len(result[k])
+                    )
+            # check if there are more results
+            if all(k in r for k in pag_keys):
+                if r['count'] < r['limit']:
+                    link_next = None
+                else:
+                    link_next = next(x['href'] for x in r['links'] if x['rel'] == 'next')
+                logger.info(
+                    'Pagination - %s:%s - %s:%d - %s:%d - %s:%d - %s:%s.',
+                    'hasMore',
+                    str(r['hasMore']),
+                    'limit',
+                    r['limit'],
+                    'offset',
+                    r['offset'],
+                    'count',
+                    r['count'],
+                    'next',
+                    link_next
+                )
+                has_more = r['hasMore'] and link_next
+                if has_more:
+                    # update oauth manager data url
+                    oman.service.url_data = link_next
+            else:
+                has_more = False
     except (OAuthClientManagerError, TypeError) as err:
         logger.error('%s: %s', _('ERROR'), str(err), exc_info=True)
-    return None
+    return json.dumps(result)
 
 
 def main():
     """Main procedure."""
-    init_logging()
     args = get_args()
+    init_logging(args.loglevel)
     fman = init_file_manager(args.outdir)
     if not fman:
         sys.exit()
@@ -138,14 +214,14 @@ def main():
 
     # request data
     if oman:
-        print('{} {}...'.format(_('Initializing'), _('Request')))
-        logger.info('%s %s...', _('Initializing'), _('Request'))
+        print('{} {}...'.format(_('Initializing'), _('Requests')))
+        logger.info('%s %s...', _('Initializing'), _('Requests'))
         result = process(oman)
         status = _('Succeeded')
         if not result:
             status = _('Failed')
-        print('{} {}'.format(_('Request'), status))
-        logger.info('%s %s', _('Request'), status)
+        print('{} {}'.format(_('Requests'), status))
+        logger.info('%s %s', _('Requests'), status)
 
     # output result
     tman.end()
