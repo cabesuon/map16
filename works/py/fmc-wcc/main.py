@@ -12,11 +12,11 @@ import json
 # add top level package to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 # pylint: disable=wrong-import-position
-from pyprograms.commons.oauth_client import (
+from py.commons.oauth_client import (
     OAuthClientManager, OAuthClientManagerError, OAuthClientService, OAuthClientCredentials
 )
-from pyprograms.commons.time import TimeManager, get_str_time
-from pyprograms.commons.file import FileManager, FileManagerError
+from py.commons.time import TimeManager, get_str_time
+from py.commons.file import FileManager, FileManagerError
 # pylint: enable=wrong-import-position
 _ = gettext.gettext
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
