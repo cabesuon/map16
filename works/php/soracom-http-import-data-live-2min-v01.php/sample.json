@@ -1,0 +1,129 @@
+{
+  "Sampling Interval": 120,
+  "Data": [
+    {
+      "Distance": 3119,
+      "Battery": 3.56
+    },
+    {
+      "Distance": 3109,
+      "Battery": 3.56
+    },
+    {
+      "Distance": 2000,
+      "Battery": 3.57
+    },
+    {
+      "Distance": 2207,
+      "Battery": 3.58
+    },
+    {
+      "Distance": 3110,
+      "Battery": 3.58
+    },
+    {
+      "Distance": 3109,
+      "Battery": 3.58
+    },
+    {
+      "Distance": 3115,
+      "Battery": 3.58
+    },
+    {
+      "Distance": 3117,
+      "Battery": 3.59
+    },
+    {
+      "Distance": 3118,
+      "Battery": 3.59
+    },
+    {
+      "Distance": 3114,
+      "Battery": 3.59
+    },
+    {
+      "Distance": 3116,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3116,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3118,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3110,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 884,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3110,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3116,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3113,
+      "Battery": 3.60
+    },
+    {
+      "Distance": 3111,
+      "Battery": 3.61
+    },
+    {
+      "Distance": 3114,
+      "Battery": 3.61
+    },
+    {
+      "Distance": 3108,
+      "Battery": 3.61
+    },
+    {
+      "Distance": 3111,
+      "Battery": 3.61
+    },
+    {
+      "Distance": 3111,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 3116,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 3113,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 3111,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 881,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 3118,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 889,
+      "Battery": 3.62
+    },
+    {
+      "Distance": 3116,
+      "Battery": 3.62
+    }
+  ],
+  "RSSI": 0,
+  "IMEI": "860548046704273",
+  "ICCID": "8942310220000538243F",
+  "Network": "HSPA+TE"
+}

@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "d4524ee6-ed54-43f3-9b62-9efbca84772d",
+		"name": "map16-soracom",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "soracom",
+			"item": [
+				{
+					"name": "import-data-live-2min-60",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Sampling Interval\": 120,\n  \"Data\": [\n    {\n      \"Distance\": 3119,\n      \"Battery\": 3.56\n    },\n    {\n      \"Distance\": 3109,\n      \"Battery\": 3.56\n    },\n    {\n      \"Distance\": 2000,\n      \"Battery\": 3.57\n    },\n    {\n      \"Distance\": 2207,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3110,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3109,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3115,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3117,\n      \"Battery\": 3.59\n    },\n    {\n      \"Distance\": 3118,\n      \"Battery\": 3.59\n    },\n    {\n      \"Distance\": 3114,\n      \"Battery\": 3.59\n    },\n    {\n      \"Distance\": 3116,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3116,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3118,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3110,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 884,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3110,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3116,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3113,\n      \"Battery\": 3.60\n    },\n    {\n      \"Distance\": 3111,\n      \"Battery\": 3.61\n    },\n    {\n      \"Distance\": 3114,\n      \"Battery\": 3.61\n    },\n    {\n      \"Distance\": 3108,\n      \"Battery\": 3.61\n    },\n    {\n      \"Distance\": 3111,\n      \"Battery\": 3.61\n    },\n    {\n      \"Distance\": 3111,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 3116,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 3113,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 3111,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 881,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 3118,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 889,\n      \"Battery\": 3.62\n    },\n    {\n      \"Distance\": 3116,\n      \"Battery\": 3.62\n    }\n  ],\n  \"RSSI\": 0,\n  \"IMEI\": \"860548046704273\",\n  \"ICCID\": \"8942310220000538243F\",\n  \"Network\": \"HSPA+TE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost/soracom/import-data-live-2min.php",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"soracom",
+								"import-data-live-2min.php"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "import-data-live-2min-11",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Sampling Interval\": 120,\n  \"Data\": [\n    {\n      \"Distance\": 3119,\n      \"Battery\": 3.56\n    },\n    {\n      \"Distance\": 3109,\n      \"Battery\": 3.56\n    },\n    {\n      \"Distance\": 2000,\n      \"Battery\": 3.57\n    },\n    {\n      \"Distance\": 2207,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3110,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3109,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3115,\n      \"Battery\": 3.58\n    },\n    {\n      \"Distance\": 3117,\n      \"Battery\": 3.59\n    },\n    {\n      \"Distance\": 3118,\n      \"Battery\": 3.59\n    },\n    {\n      \"Distance\": 3114,\n      \"Battery\": 3.59\n    },\n    {\n      \"Distance\": 3116,\n      \"Battery\": 3.60\n    }\n  ],\n  \"RSSI\": 0,\n  \"IMEI\": \"860548046704273\",\n  \"ICCID\": \"8942310220000538243F\",\n  \"Network\": \"HSPA+TE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost/soracom/import-data-live-2min.php",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"soracom",
+								"import-data-live-2min.php"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "import-data-live-2min-1",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Sampling Interval\": 120,\n  \"Data\": [\n    {\n      \"Distance\": 3119,\n      \"Battery\": 3.56\n    }\n  ],\n  \"RSSI\": 0,\n  \"IMEI\": \"860548046704273\",\n  \"ICCID\": \"8942310220000538243F\",\n  \"Network\": \"HSPA+TE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost/soracom/import-data-live-2min.php",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"soracom",
+								"import-data-live-2min.php"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

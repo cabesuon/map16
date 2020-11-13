@@ -462,7 +462,7 @@ require([
       content: document.getElementById('infoDiv'),
       expandIconClass: 'esri-icon-filter',
       autoCollapse: true,
-      expanded: true
+      expanded: false
     }),
     'top-left'
   );
