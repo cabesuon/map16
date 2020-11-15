@@ -1,0 +1,45 @@
+{
+  "received_at": "2020-11-15 00:15:38",
+  "end_device_ids": {
+    "application_ids": {
+      "application_id": "map16-uu-ultrasonic-live"
+    },
+    "device_id": "8942310220000538243F"
+  },
+  "uplink_message": {
+    "rx_metadata": [
+      {
+        "gateway_ids": {
+          "gateway_id": "gateway-id"
+        },
+        "rssi": 0,
+        "snr": 0
+      },
+      {
+        "gateway_ids": {
+          "gateway_id": "gateway-id-2"
+        },
+        "rssi": 0,
+        "snr": 0
+      },
+      {
+        "gateway_ids": {
+          "gateway_id": "gateway-id-3"
+        },
+        "rssi": 0,
+        "snr": 0
+      }
+    ],
+    "decoded_payload": {
+      "measure": 3119,
+      "voltage": 3.56
+    },
+    "settings": {
+      "data_rate": {
+        "lora": {
+          "spreading_factor": 0
+        }
+      }
+    }
+  }
+}

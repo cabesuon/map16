@@ -1,0 +1,43 @@
+{
+	"info": {
+		"_postman_id": "5e4830e0-3c4c-4ff8-9b5d-124e2a5842bc",
+		"name": "map16-tti",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "import-db-02",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"received_at\": \"2020-11-15 00:15:38\",\n  \"end_device_ids\": {\n    \"application_ids\": {\n      \"application_id\": \"map16-uu-ultrasonic-live\"\n    },\n    \"device_id\": \"8942310220000538243F\"\n  },\n  \"uplink_message\": {\n    \"rx_metadata\": [\n      {\n        \"gateway_ids\": {\n          \"gateway_id\": \"gateway-id\"\n        },\n        \"rssi\": 0,\n        \"snr\": 0\n      },\n      {\n        \"gateway_ids\": {\n          \"gateway_id\": \"gateway-id-2\"\n        },\n        \"rssi\": 0,\n        \"snr\": 0\n      },\n      {\n        \"gateway_ids\": {\n          \"gateway_id\": \"gateway-id-3\"\n        },\n        \"rssi\": 0,\n        \"snr\": 0\n      }\n    ],\n    \"decoded_payload\": {\n      \"measure\": 3119,\n      \"voltage\": 3.56\n    },\n    \"settings\": {\n      \"data_rate\": {\n        \"lora\": {\n          \"spreading_factor\": 0\n        }\n      }\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/tti/import_db_02.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tti",
+						"import_db_02.php"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

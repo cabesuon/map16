@@ -29,7 +29,7 @@ if(!is_array($decoded)){
 $servername = "db";
 $username = "map16sqlsys";
 $password = "map16sqlsys";
-$dbname = "soracom";
+$dbname = "map16_sus_live_sensor_db";
 
 $myConnection = mysqli_connect($servername,$username,$password,$dbname) or die ("could not connect to mysql"); 
 
@@ -94,7 +94,8 @@ $sqlInsertValues
 
 # print($sqlCommand);
 
-$query=mysqli_query($myConnection, $sqlCommand) or die("could not insert values to store table: $mysql_error($myConnection)");
+$query=mysqli_query($myConnection, $sqlCommand) or
+  die("could not insert values to store table: $mysql_error($myConnection)");
 
 // live data
 
@@ -115,6 +116,7 @@ network = '$network'
 WHERE iccid = '$iccid' AND date_id <> NOW()
 ";
 
-$query=mysqli_query($myConnection, $sqlCommand) or die("could not udpate values to live table: $mysql_error($myConnection)") 
+$query = mysqli_query($myConnection, $sqlCommand) or 
+  die("could not udpate values to live table: $mysql_error($myConnection)") 
 
 ?>
