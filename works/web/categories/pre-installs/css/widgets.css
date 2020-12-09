@@ -136,16 +136,16 @@ Google Street View
   color: transparent;
   border: none;
   background-color: transparent;
-  background-image: url('../dist/GSVPegman/images/gsv_button_norm.png');
+  background-image: url('../widgets/GSVPegman/images/gsv_button_norm.png');
   background-repeat: no-repeat;
 }
 
 .map16-gsv-pegman button:hover {
-  background-image: url('../dist/GSVPegman/images/gsv_button_over.png');
+  background-image: url('../widgets/GSVPegman/images/gsv_button_over.png');
 }
 
 .map16-gsv-pegman button:active {
-  background-image: url('../dist/GSVPegman/images/gsv_button_down.png');
+  background-image: url('../widgets/GSVPegman/images/gsv_button_down.png');
 }
 
 .map16-gsv {

@@ -552,10 +552,10 @@ require([
   const gsv = new GSV({
     view: view,
     pegmanParams: {
-      pegman: 'dist/GSVPegman/images/pegman.png',
-      los: 'dist/GSVPegman/images/los.png',
-      pegmanFlyingE: 'dist/GSVPegman/images/pegman_flying_e.png',
-      pegmanFlyingW: 'dist/GSVPegman/images/pegman_flying_w.png'
+      pegman: 'widgets/GSVPegman/images/pegman.png',
+      los: 'widgets/GSVPegman/images/los.png',
+      pegmanFlyingE: 'widgets/GSVPegman/images/pegman_flying_e.png',
+      pegmanFlyingW: 'widgets/GSVPegman/images/pegman_flying_w.png'
     }
   });
   const expandGSV = new Expand({
