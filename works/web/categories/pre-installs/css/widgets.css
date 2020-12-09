@@ -1,0 +1,275 @@
+.map16-btn {
+  position: relative;
+  display: inline-block;
+  width: auto;
+  color: #ffffff;
+  border: 1px solid #6c6c6c;
+  border-radius: 0;
+  background-color: #6c6c6c;
+  box-sizing: border-box;
+  transition: all 0.05s linear;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.map16-btn:hover {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #6c6c6c;
+  border-color: #6c6c6c; 
+}
+
+.map16-btn:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.map16-btn-clear {
+  color: #6c6c6c;
+  background: #ffffff;
+  border-color: #6c6c6c; 
+}
+
+.map16-btn-clear:hover {
+  color: #ffffff;
+  background: #6c6c6c;
+  border-color: #6c6c6c; 
+}
+
+.map16-btn-icon {
+  font-size:14px;
+  background-color:#fff;
+  color:#6e6e6e;
+  width:32px;
+  height:32px;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  cursor:pointer;
+  text-align:center;
+  display:flex;
+  flex-flow:row nowrap;
+  justify-content:center;
+  align-items:center;
+  transition:background-color 125ms ease-in-out;
+}
+
+.map16-btn-icon:hover{
+  background-color:#f3f3f3;
+  color:#2e2e2e;
+}
+
+.map16-btn-icon:active{
+  background-color:#e2f1fb
+}
+
+.map16-widget {
+  width: 100%;
+  height: 100%;
+  box-sizing:border-box;
+  background: transparent;
+  box-shadow: none;
+  color: #323232;
+  font-size: 14px;
+  font-family: "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: 1.3em;
+  background-color: #fff;
+}
+
+.map16-table {
+  color:#323232;
+  border:none;
+  border-collapse:collapse;
+  width:100%;
+}
+
+.map16-table tr:nth-child(odd){
+  background-color:rgba(76,76,76,0.1);
+}
+
+.map16-table tr:nth-child(even){
+  background-color:rgba(76,76,76,0.02);
+}
+
+.map16-table tr a{
+  color:#6e6e6e;
+}
+.map16-table tr a:hover,
+.map16-table tr a:focus {
+  color:#2e2e2e;
+}
+
+.map16-table tr td,
+.map16-table tr th {
+  padding:0.5em 0.7em;
+  word-break:break-word;
+  vertical-align:top;
+  font-size:12px;
+  font-weight:400;
+}
+
+.map16-table tr th{
+  width:50%;
+  text-align:left;
+  border-right: 3px solid rgba(0,0,0,0.05);
+}
+
+.map16-table tr td{
+  width:50%;
+}
+
+/*
+
+Google Street View
+
+*/
+
+.map16-gsv-panorama {
+  width: 400px;
+  height: 400px;
+}
+
+.map16-gsv-pegman button {
+  width: 45px;
+  height: 45px;
+  color: transparent;
+  border: none;
+  background-color: transparent;
+  background-image: url('../dist/GSVPegman/images/gsv_button_norm.png');
+  background-repeat: no-repeat;
+}
+
+.map16-gsv-pegman button:hover {
+  background-image: url('../dist/GSVPegman/images/gsv_button_over.png');
+}
+
+.map16-gsv-pegman button:active {
+  background-image: url('../dist/GSVPegman/images/gsv_button_down.png');
+}
+
+.map16-gsv {
+  padding: 5px;
+  width: 200px;
+  height: 140px;
+}
+
+.map16-gsv p {
+  font-style: italic;
+  text-align: center;
+}
+
+.map16-gsv .map16-gsv-pegman {
+  text-align: center;
+}
+
+
+/*
+
+Locations Finder
+
+*/
+
+.map16-locations-finder {
+  width: 220px;
+  height: 270px;
+}
+
+.map16-locations-finder-header {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px;
+  margin-bottom: 0px;
+}
+
+/*
+
+Locations Field Finder
+
+*/
+
+.map16-locations-field-finder {
+  width: 200px;
+  height: 230px;
+  margin: 10px;
+}
+
+.map16-locations-field-finder-label {
+  height: 60px;
+  font-style: italic;
+}
+
+.map16-locations-field-finder select {
+  width: 200px;
+  height: 30px;
+}
+
+.map16-locations-field-finder button {
+  width: 100%;
+  height: 30px;
+  margin-top: 10px;
+}
+
+/*
+
+Locations Finder Results
+
+*/
+
+.map16-locations-finder-results {
+  width: 300px;
+  max-height: 400px;
+  padding: 10px;
+}
+
+.map16-locations-finder-results-header {
+  height: 30px;
+}
+
+.map16-locations-finder-results-tools {
+  width: 280px;
+  height: 30px;
+  display: flex;
+  flex-flow: row;
+}
+
+.map16-locations-finder-results-tools select {
+  width: 245px;
+  height: 30px;
+  margin-right: 5px;
+}
+
+/*
+
+Locations List
+
+*/
+
+.map16-locations-list-info {
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.map16-locations-list-list {
+  height: 300px;
+  overflow: auto;
+}
+
+/*
+
+Locations Details
+
+*/
+
+.map16-locations-detail {
+  margin-bottom: 10px;
+  background-color: white;
+}
+
+.map16-locations-detail:hover {
+  background-color: #e5e5e5;
+}

@@ -8,9 +8,10 @@ require([
   'esri/widgets/Fullscreen',
   'esri/widgets/Search',
   'esri/widgets/Measurement',
-  'esri/widgets/TimeSlider',
+  // 'esri/widgets/TimeSlider',
   'esri/popup/content/AttachmentsContent',
-  'esri/popup/content/TextContent'
+  'esri/popup/content/TextContent',
+  'map16/GSV/GSV'
 ], function (
   MapView,
   Map,
@@ -21,9 +22,10 @@ require([
   Fullscreen,
   Search,
   Measurement,
-  TimeSlider,
+  // TimeSlider,
   AttachmentsContent,
-  TextContent
+  TextContent,
+  GSV
 ) {
   /**
    * @type {Graphic[]}
@@ -54,15 +56,34 @@ require([
       content: [
         {
           type: 'text',
-          text: 'This cluster represents <b>{cluster_count}</b> features.'
-        },
-        {
-          type: 'text',
-          text:
-            'Predominant sensor type in this cluster is <b>{cluster_type_sensor_type_label}</b>.'
+          text: 'This cluster represents <b>{cluster_count}</b> sensors.'
         }
+        // ***** HERE: there is no ALERT_LEVEL attribute in the layer *****
+        // ,
+        // {
+        //   type: 'text',
+        //   text:
+        //   'Predominant warning level of these sensors is <b>{cluster_type_ALERT_LEVEL}</b>.'
+        // }
       ]
-    }
+    },
+    clusterMinSize: '24px',
+    clusterMaxSize: '60px',
+    labelingInfo: [{
+      deconflictionStrategy: 'none',
+      labelExpressionInfo: {
+        expression: "Text($feature.cluster_count, '#,###')"
+      },
+      symbol: {
+        type: 'text',
+        color: '#474747',
+        font: {
+          family: 'Noto Sans',
+          size: '12px'
+        }
+      },
+      labelPlacement: 'center-center'
+    }]
   };
 
   /**
@@ -109,30 +130,30 @@ require([
    * @param {Date} date - The date
    * @return {string} -The string format
    */
-  function dateCompare (d1, d2) {
-    // year
-    if (d1.getFullYear() < d2.getFullYear()) {
-      return -1;
-    }
-    if (d1.getFullYear() > d2.getFullYear()) {
-      return 1;
-    }
-    // month
-    if (d1.getMonth() < d2.getMonth()) {
-      return -1;
-    }
-    if (d1.getMonth() > d2.getMonth()) {
-      return 1;
-    }
-    // date
-    if (d1.getDate() < d2.getDate()) {
-      return -1;
-    }
-    if (d1.getDate() > d2.getDate()) {
-      return 1;
-    }
-    return 0;
-  }
+  // function dateCompare (d1, d2) {
+  //   // year
+  //   if (d1.getFullYear() < d2.getFullYear()) {
+  //     return -1;
+  //   }
+  //   if (d1.getFullYear() > d2.getFullYear()) {
+  //     return 1;
+  //   }
+  //   // month
+  //   if (d1.getMonth() < d2.getMonth()) {
+  //     return -1;
+  //   }
+  //   if (d1.getMonth() > d2.getMonth()) {
+  //     return 1;
+  //   }
+  //   // date
+  //   if (d1.getDate() < d2.getDate()) {
+  //     return -1;
+  //   }
+  //   if (d1.getDate() > d2.getDate()) {
+  //     return 1;
+  //   }
+  //   return 0;
+  // }
 
   /**
    * Returns a safe value of a feature attribute value for PopupTemplate.
@@ -171,37 +192,33 @@ require([
     }
     let attr = [];
     if (feature.graphic.layer === sensorsLayer) {
+      // ***** HERE goes the desire attributes of layers *****
       attr = [
         {
-          value: feature.graphic.attributes.sensor_type_label,
-          label: 'Type'
+          value: feature.graphic.attributes.node_location,
+          label: 'Node Location'
         },
         {
-          value: feature.graphic.attributes.NODEREFERE,
-          label: 'Node Ref'
+          value: feature.graphic.attributes.private,
+          label: 'Private'
         },
         {
-          value: feature.graphic.attributes.POSTCODE,
-          label: 'Postcode'
+          value: feature.graphic.attributes.customer_access,
+          label: 'Has The Customer Allowed Access?'
         },
         {
-          value: feature.graphic.attributes.THOROUGHFARE,
-          label: 'Road'
+          value: feature.graphic.attributes.customer_name,
+          label: 'Customer Name'
         },
         {
-          value: feature.graphic.attributes.TOWN,
-          label: 'Town'
+          value: feature.graphic.attributes.customer_tel,
+          label: 'Customer Tel'
         },
         {
-          value: feature.graphic.attributes.DAM_AREA,
-          label: 'DAM Area'
-        },
-        {
-          value: dateToString(
-            normDate(feature.graphic.attributes.CreationDate)
-          ),
-          label: 'Creation Date'
+          value: feature.graphic.attributes.inspection_type,
+          label: 'Inspection Type'
         }
+        // continue ...
       ];
     } else if (feature.graphic.layer === gatewaysLayer) {
       attr = [
@@ -239,17 +256,15 @@ require([
    * @type {PopupTemplate}
    */
   const sensorsPopupTemplate = {
-    title: '{sensor_type_label} - {POSTCODE}',
+    title: '{node_location} - {inspection_type}',
     lastEditInfoEnabled: false,
     content: popupTemplateContent,
     outFields: [
-      'sensor_type_label',
-      'NODEREFERE',
-      'POSTCODE',
-      'THOROUGHFARE',
-      'TOWN',
-      'DAM_AREA',
-      'CreationDate'
+      'private',
+      'customer_access',
+      'customer_name',
+      'customer_tel',
+      'inspection_type'
     ]
   };
 
@@ -258,17 +273,15 @@ require([
    */
   const sensorsLayer = new FeatureLayer({
     url:
-      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_sensor_pre_install_wgs_master/FeatureServer/0',
+      'https://services8.arcgis.com/7LEpm0qhEOOXFxtS/arcgis/rest/services/sus_uu_pre_install_form_fm_wgs_master_view/FeatureServer/0',
     featureReduction: sensorsClusterConfig,
     popupTemplate: sensorsPopupTemplate,
     outFields: [
-      'sensor_type_label',
-      'NODEREFERE',
-      'POSTCODE',
-      'THOROUGHFARE',
-      'TOWN',
-      'DAM_AREA',
-      'CreationDate'
+      'private',
+      'customer_access',
+      'customer_name',
+      'customer_tel',
+      'inspection_type'
     ]
   });
 
@@ -361,9 +374,9 @@ require([
   /**
    * @type {TimeSlider}
    */
-  const timeSlider = new TimeSlider({
-    container: 'timeSlider'
-  });
+  // const timeSlider = new TimeSlider({
+  //   container: 'timeSlider'
+  // });
 
   /**
    * Returns the time extent of a feature layer.
@@ -372,22 +385,22 @@ require([
    * @param {string} fieldName - The name of the date field
    * @return {Promise} - A promise for one feature with date attributes 'min' and 'max'
    */
-  function featureLayerFullTimeExtent (layer, fieldName) {
-    const query = layer.createQuery();
-    query.outStatistics = [
-      {
-        statisticType: 'MIN',
-        onStatisticField: fieldName,
-        outStatisticFieldName: 'min'
-      },
-      {
-        statisticType: 'MAX',
-        onStatisticField: fieldName,
-        outStatisticFieldName: 'max'
-      }
-    ];
-    return layer.queryFeatures(query);
-  }
+  // function featureLayerFullTimeExtent (layer, fieldName) {
+  //   const query = layer.createQuery();
+  //   query.outStatistics = [
+  //     {
+  //       statisticType: 'MIN',
+  //       onStatisticField: fieldName,
+  //       outStatisticFieldName: 'min'
+  //     },
+  //     {
+  //       statisticType: 'MAX',
+  //       onStatisticField: fieldName,
+  //       outStatisticFieldName: 'max'
+  //     }
+  //   ];
+  //   return layer.queryFeatures(query);
+  // }
 
   /**
    * Extend the time extent of the time slider.
@@ -395,28 +408,28 @@ require([
    * @param {Date} start - The start of the extent
    * @param {Date} end - The end of the extent
    */
-  function timeSliderFullTimeExtentExtend (start, end) {
-    if (!timeSlider.fullTimeExtent) {
-      timeSlider.fullTimeExtent = { start, end };
-    } else {
-      if (dateCompare(start, timeSlider.fullTimeExtent.start) === 1) {
-        timeSlider.fullTimeExtent.start = start;
-      }
-      if (dateCompare(end, timeSlider.fullTimeExtent.end) === -1) {
-        timeSlider.fullTimeExtent.end = end;
-      }
-    }
-    timeSlider.values = [
-      timeSlider.fullTimeExtent.start,
-      timeSlider.fullTimeExtent.end
-    ];
-    timeSlider.stops = {
-      interval: {
-        value: 1,
-        unit: 'days'
-      }
-    };
-  }
+  // function timeSliderFullTimeExtentExtend (start, end) {
+  //   if (!timeSlider.fullTimeExtent) {
+  //     timeSlider.fullTimeExtent = { start, end };
+  //   } else {
+  //     if (dateCompare(start, timeSlider.fullTimeExtent.start) === 1) {
+  //       timeSlider.fullTimeExtent.start = start;
+  //     }
+  //     if (dateCompare(end, timeSlider.fullTimeExtent.end) === -1) {
+  //       timeSlider.fullTimeExtent.end = end;
+  //     }
+  //   }
+  //   timeSlider.values = [
+  //     timeSlider.fullTimeExtent.start,
+  //     timeSlider.fullTimeExtent.end
+  //   ];
+  //   timeSlider.stops = {
+  //     interval: {
+  //       value: 1,
+  //       unit: 'days'
+  //     }
+  //   };
+  // }
 
   /**
    * Helper function to norm date
@@ -428,29 +441,29 @@ require([
   /**
    * Helper function for time slider time extent and values initialization
    */
-  function timeSliderTimeExtentInit () {
-    featureLayerFullTimeExtent(sensorsLayer, 'CreationDate')
-      .then(function (response) {
-        if (!response.features) {
-          return;
-        }
-        timeSliderFullTimeExtentExtend(
-          normDate(response.features[0].attributes.min),
-          normDate(response.features[0].attributes.max)
-        );
-      });
-    featureLayerFullTimeExtent(gatewaysLayer, 'CreationDate')
-      .then(function (response) {
-        if (!response.features) {
-          return;
-        }
-        timeSliderFullTimeExtentExtend(
-          normDate(response.features[0].attributes.min),
-          normDate(response.features[0].attributes.max)
-        );
-      });
-  }
-  timeSliderTimeExtentInit();
+  // function timeSliderTimeExtentInit () {
+  //   featureLayerFullTimeExtent(sensorsLayer, 'CreationDate')
+  //     .then(function (response) {
+  //       if (!response.features) {
+  //         return;
+  //       }
+  //       timeSliderFullTimeExtentExtend(
+  //         normDate(response.features[0].attributes.min),
+  //         normDate(response.features[0].attributes.max)
+  //       );
+  //     });
+  //   featureLayerFullTimeExtent(gatewaysLayer, 'CreationDate')
+  //     .then(function (response) {
+  //       if (!response.features) {
+  //         return;
+  //       }
+  //       timeSliderFullTimeExtentExtend(
+  //         normDate(response.features[0].attributes.min),
+  //         normDate(response.features[0].attributes.max)
+  //       );
+  //     });
+  // }
+  // timeSliderTimeExtentInit();
 
   // ui
 
@@ -525,16 +538,42 @@ require([
     'bottom-right'
   );
 
+  // view.ui.add(
+  //   new Expand({
+  //     view: view,
+  //     expandTooltip: 'Show TimeSlider',
+  //     content: timeSlider.domNode,
+  //     expandIconClass: 'esri-icon-filter',
+  //     expanded: false
+  //   }),
+  //   'top-left'
+  // );
+
+  const gsv = new GSV({
+    view: view,
+    pegmanParams: {
+      pegman: 'dist/GSVPegman/images/pegman.png',
+      los: 'dist/GSVPegman/images/los.png',
+      pegmanFlyingE: 'dist/GSVPegman/images/pegman_flying_e.png',
+      pegmanFlyingW: 'dist/GSVPegman/images/pegman_flying_w.png'
+    }
+  });
+  const expandGSV = new Expand({
+    expandTooltip: 'Street View',
+    expandIconClass: 'esri-icon-media',
+    expanded: false,
+    view: view,
+    content: gsv,
+    iconNumber: ''
+  });
   view.ui.add(
-    new Expand({
-      view: view,
-      expandTooltip: 'Show TimeSlider',
-      content: timeSlider.domNode,
-      expandIconClass: 'esri-icon-filter',
-      expanded: false
-    }),
+    expandGSV,
     'top-left'
   );
+  gsv.watch('state', function (state) {
+    expandGSV.iconNumber = state.active ? '*' : '';
+    console.log(`GSV active:${state.active}`);
+  });
 
   // list
 
@@ -695,8 +734,8 @@ require([
         layerView
           .queryFeatures({
             geometry: view.extent,
-            returnGeometry: true,
-            orderByFields: ['sensor_type_label']
+            returnGeometry: true
+            // orderByFields: ['sensor_type_label']
           })
           .then(function (results) {
             sensorsGraphics = results.features;
@@ -831,47 +870,47 @@ require([
 
   // filter
 
-  function extractBetween (efield, esource, a, b) {
-    return `EXTRACT(${efield} FROM ${esource}) BETWEEN ${a} AND ${b}`;
-  }
+  // function extractBetween (efield, esource, a, b) {
+  //   return `EXTRACT(${efield} FROM ${esource}) BETWEEN ${a} AND ${b}`;
+  // }
 
   /**
    * Update the filter of the layers.
    */
-  function layerViewFilterUpdate () {
-    const filter = {
-      where:
-      extractBetween(
-        'YEAR',
-        'CreationDate',
-        timeSlider.timeExtent.start.getFullYear(),
-        timeSlider.timeExtent.end.getFullYear()
-      ) +
-      ' AND ' +
-      extractBetween(
-        'MONTH',
-        'CreationDate',
-        timeSlider.timeExtent.start.getMonth() + 1,
-        timeSlider.timeExtent.end.getMonth() + 1
-      ) +
-      ' AND ' +
-      extractBetween(
-        'DAY',
-        'CreationDate',
-        timeSlider.timeExtent.start.getDate(),
-        timeSlider.timeExtent.end.getDate()
-      )
-    };
-    if (sensorsLayer) {
-      sensorsLayer.definitionExpression = filter.where;
-    }
-    if (gatewaysLayer) {
-      gatewaysLayer.definitionExpression = filter.where;
-    }
-    listNodeReset();
-  }
+  // function layerViewFilterUpdate () {
+  //   const filter = {
+  //     where:
+  //     extractBetween(
+  //       'YEAR',
+  //       'CreationDate',
+  //       timeSlider.timeExtent.start.getFullYear(),
+  //       timeSlider.timeExtent.end.getFullYear()
+  //     ) +
+  //     ' AND ' +
+  //     extractBetween(
+  //       'MONTH',
+  //       'CreationDate',
+  //       timeSlider.timeExtent.start.getMonth() + 1,
+  //       timeSlider.timeExtent.end.getMonth() + 1
+  //     ) +
+  //     ' AND ' +
+  //     extractBetween(
+  //       'DAY',
+  //       'CreationDate',
+  //       timeSlider.timeExtent.start.getDate(),
+  //       timeSlider.timeExtent.end.getDate()
+  //     )
+  //   };
+  //   if (sensorsLayer) {
+  //     sensorsLayer.definitionExpression = filter.where;
+  //   }
+  //   if (gatewaysLayer) {
+  //     gatewaysLayer.definitionExpression = filter.where;
+  //   }
+  //   listNodeReset();
+  // }
 
-  timeSlider.watch('timeExtent', layerViewFilterUpdate);
+  // timeSlider.watch('timeExtent', layerViewFilterUpdate);
 
   /**
    * Zoom change handler for map view.
