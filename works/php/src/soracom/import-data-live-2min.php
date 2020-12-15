@@ -95,7 +95,7 @@ $sqlInsertValues
 # print($sqlCommand);
 
 $query=mysqli_query($myConnection, $sqlCommand) or
-  die("could not insert values to store table: $mysql_error($myConnection)");
+  die("could not insert values to store table: $mysqli_error($myConnection)");
 
 // live data
 
@@ -117,6 +117,6 @@ WHERE iccid = '$iccid' AND date_id <> NOW()
 ";
 
 $query = mysqli_query($myConnection, $sqlCommand) or 
-  die("could not udpate values to live table: $mysql_error($myConnection)") 
+  die("could not udpate values to live table: $mysqli_error($myConnection)") 
 
 ?>
