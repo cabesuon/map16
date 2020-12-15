@@ -40,7 +40,10 @@ if (mysqli_connect_errno()) {
 }
 
 if (empty($decoded['Data'])) {
-  throw new Exception('Received content is empty!');
+  error_log(
+    sprintf('Received content is empty! - ICCID: %s', $decoded['ICCID'])
+  );
+  exit(1);
 }
 
 // fixed values
@@ -127,7 +130,7 @@ WHERE iccid = '$iccid' AND date_id <> NOW()
 $query = mysqli_query($myConnection, $sqlCommand) or 
   die(
     sprintf("could not udpate values to live table: %s", mysqli_error($myConnection))
-  ) 
+  );
 
 /* close connection */
 mysqli_close($myConnection);
