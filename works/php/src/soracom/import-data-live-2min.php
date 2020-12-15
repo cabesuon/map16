@@ -33,6 +33,12 @@ $dbname = "map16_sus_live_sensor_db";
 
 $myConnection = mysqli_connect($servername,$username,$password,$dbname) or die ("could not connect to mysql"); 
 
+/* check connection */
+if (mysqli_connect_errno()) {
+  printf("Connect failed: %s\n", mysqli_connect_error());
+  exit();
+}
+
 if (empty($decoded['Data'])) {
   throw new Exception('Received content is empty!');
 }
@@ -95,7 +101,9 @@ $sqlInsertValues
 # print($sqlCommand);
 
 $query=mysqli_query($myConnection, $sqlCommand) or
-  die("could not insert values to store table: $mysqli_error($myConnection)");
+  die(
+    sprintf("could not insert values to store table: %s", mysqli_error($myConnection))
+  );
 
 // live data
 
@@ -117,6 +125,11 @@ WHERE iccid = '$iccid' AND date_id <> NOW()
 ";
 
 $query = mysqli_query($myConnection, $sqlCommand) or 
-  die("could not udpate values to live table: $mysqli_error($myConnection)") 
+  die(
+    sprintf("could not udpate values to live table: %s", mysqli_error($myConnection))
+  ) 
+
+/* close connection */
+mysqli_close($myConnection);
 
 ?>
