@@ -1,28 +1,55 @@
 <?php
-//Record - 0min - Measure1
 
-$requestMethod = $_SERVER['REQUEST_METHOD'];
+error_log(
+  implode(
+    " ",
+    array_merge(
+      ["***** "],
+      array_map(
+        function($v) { return "$v:$_SERVER[$v]"; },
+        [
+          "REQUEST_TIME",
+          "QUERY_STRING",
+          "CONTENT_TYPE",
+          "REMOTE_ADDR",
+          "REMOTE_HOST",
+          "REMOTE_PORT",
+          "REMOTE_USER"
+        ]
+      )
+    )
+  )
+);
+
 //Make sure that it is a POST request.
 if(strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') != 0){
-  throw new Exception("Request method must be POST! (not $requestMethod)");
+  error_log("***** ERROR: Request method must be POST");
+  exit(1);
 }
 
 //Make sure that the content type of the POST request has been set to application/json
 $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 if(strcasecmp($contentType, 'application/json') != 0){
-  throw new Exception("Content type must be: application/json (not $contentType)");
+  error_log("***** ERROR: Content type must be: application/json");
+  exit(1);
 }
 
 //Receive the RAW post data.
 $content = trim(file_get_contents("php://input"));
 
+error_log(
+  sprintf("***** REQUEST_CONTENT: %s", preg_replace('/\s+/', '', file_get_contents("php://input")))
+);
+
 //Attempt to decode the incoming RAW post data from JSON.
 $decoded = json_decode($content, true);
 
 //If json_decode failed, the JSON is invalid.
-if(!is_array($decoded)){
-  throw new Exception('Received content contained invalid JSON!');
-}
+// if(!is_object($decoded)){
+  // throw new Exception('Received content contained invalid JSON');
+  // error_log("***** ERROR: Received content contained invalid JSON");
+  // exit(1);
+// }
 
 //Process the JSON.
 // Create connection
@@ -31,17 +58,20 @@ $username = "map16sqlsys";
 $password = "map16sqlsys";
 $dbname = "map16_sus_live_sensor_db";
 
-$myConnection = mysqli_connect($servername,$username,$password,$dbname) or die ("could not connect to mysql"); 
+$myConnection = mysqli_connect($servername,$username,$password,$dbname)
+or die ("***** ERROR: Could not connect to mysql"); 
 
 /* check connection */
 if (mysqli_connect_errno()) {
-  printf("Connect failed: %s\n", mysqli_connect_error());
-  exit();
+  error_log(
+    sprintf("***** ERROR: Connect failed: %s", mysqli_connect_error())
+  );
+  exit(1);
 }
 
 if (empty($decoded['Data'])) {
   error_log(
-    sprintf('Received content is empty! - ICCID: %s', $decoded['ICCID'])
+    sprintf("***** ERROR: Received content is empty - ICCID: %s", $decoded['ICCID'])
   );
   exit(1);
 }
@@ -105,7 +135,7 @@ $sqlInsertValues
 
 $query=mysqli_query($myConnection, $sqlCommand) or
   die(
-    sprintf("could not insert values to store table: %s", mysqli_error($myConnection))
+    sprintf("***** ERROR: Could not insert values to store table: %s", mysqli_error($myConnection))
   );
 
 // live data
@@ -129,7 +159,7 @@ WHERE iccid = '$iccid' AND date_id <> NOW()
 
 $query = mysqli_query($myConnection, $sqlCommand) or 
   die(
-    sprintf("could not udpate values to live table: %s", mysqli_error($myConnection))
+    sprintf("***** ERROR: Could not udpate values to live table: %s", mysqli_error($myConnection))
   );
 
 /* close connection */
