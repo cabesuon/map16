@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>map16 | SMA</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Open Sans', sans-serif;
+    }
+    h1 {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0;
+      padding: 0;
+    }
+    p {
+      font-size: 10px;
+      font-style: italic;
+    }
+    input {
+      font-size: 11px;
+      height: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .flex {
+      display: flex;
+      justify-content: space-evenly;
+    }
+    .btn-green {
+      font-size: 14px;
+      color: #ffffff;
+      background-color: #4CAF50;
+      border: none;
+      padding: 14px 28px;
+    }
+    .btn-green:hover {
+      background-color: #3B9E40;
+    }
+    .center {
+      display: flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+    .mb-1 {
+      margin-bottom: 1rem;
+    }
+    .p-1 {
+      padding: 1rem;;
+    }
+    .b-2-g {
+      border: #4CAF50 5px solid;
+    }
+    #chart {
+      padding: 1px 10px;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="moving-avg.js"></script>
+
+</head>
+
+<body>
+
+  <div class="flex p-1">
+    <div class="method-container">
+      <h1>Simple Moving Average</h1>
+      <p>Defaul values: window=7</p>
+      <input id="sma_n" type="number" placeholder="window">
+    </div>
+    <div class="method-container">
+      <h1>Exponential Moving Average</h1>
+      <p>Defaul values: window=7, alpha=2/(window + 1)</p>
+      <input id="ema_n" type="number" min="1" max="500" placeholder="window" class="mb-1">
+      <input id="ema_a" type="number" min="0" max="1" step="0.01" placeholder="alpha">
+    </div>
+    <div class="center">
+      <button id="update" class="btn-green">Update</button>
+    </div>
+  </div>
+  <div class="p-1">
+    <div id="chart"></div>
+  </div>
+
+  <script>
+    const options = {
+      series: [
+        { name: 'Raw Data', data: []},
+        { name: 'SMA Filter', data: []},
+        { name: 'EMA Filter', data: []}
+      ],
+      chart: {
+        height: 500,
+        type: 'line',
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'straight',
+        // colors: ['#999999', '#00ff00', '#0000ff'],
+        width: 1,
+        dashArray: 0,
+
+      },
+      title: {
+        text: 'Manhole Level (mm)'
+      },
+      noData: {
+        text: 'Loading...'
+      },
+      xaxis: {
+        type: 'datetime',
+        tickPlacement: 'on'
+      },
+      legend: {
+        position: 'top'
+      },
+      tooltip: {
+        enabled: true,
+        enabledOnSeries: undefined,
+        x: {
+          show: true,
+          format: 'HH:mm:ss - MMM dd',
+          formatter: undefined,
+        },
+      }
+    };
+    const chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+    const sma = {
+      dn: 7,
+      n: 7
+    };
+    const ema = {
+      dn: 7,
+      n: 7,
+      da: null,
+      a: null
+    };
+
+    let data = [];
+    
+    function getManholeData() {
+      return fetch('json_data/data1.json')
+      .then(response => response.json());
+    }
+
+    function updateSeries() {
+      const d = data.map(v => ({
+        x: v.x,
+        y: parseInt(v.y)
+      }));
+      chart.updateSeries([
+        { data: d },
+        { data: simpleMovingAverage(d, sma.n)
+          .map(v => ({
+            x: v.x,
+            y: Math.floor(v.y)
+          }))
+        },
+        { data: exponentialMovingAverage(d, ema.n, ema.a)
+          .map(v => ({
+            x: v.x,
+            y: Math.floor(v.y)
+          }))
+        }
+      ], true);
+    }
+
+    function updateClick() {
+      sma.n = Math.floor(Number(document.getElementById("sma_n").value)) || sma.dn;
+      ema.n = Math.floor(Number(document.getElementById("ema_n").value)) || ema.dn;
+      ema.a = Number(document.getElementById("ema_a").value) || ema.da;
+      updateSeries();
+    }
+
+    function addSeries() {
+      Promise.all([getManholeData()])
+      .then(
+        ([manholeData]) => {
+          data = manholeData;
+          updateSeries();
+          document.getElementById('update')
+          .addEventListener('click', _ => updateClick());
+        }
+      )
+      .catch(error => console.log(error));
+    }
+
+    addSeries();
+  </script>
+
+</body>
+
+</html>
